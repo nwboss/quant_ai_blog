@@ -1,0 +1,141 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublicNews, getNewsSlug, type NewsEntry } from '../../lib/content';
+import { url, formatDate } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const newsList = await getPublicNews();
+
+  return newsList.map((item, index) => {
+    const slug = getNewsSlug(item);
+    const nextNews = index > 0 ? newsList[index - 1] : null;
+    const prevNews = index < newsList.length - 1 ? newsList[index + 1] : null;
+
+    return {
+      params: { slug },
+      props: {
+        item,
+        prevNews,
+        nextNews,
+      },
+    };
+  });
+}
+
+export interface Props {
+  item: NewsEntry;
+  prevNews: NewsEntry | null;
+  nextNews: NewsEntry | null;
+}
+
+const { item, prevNews, nextNews } = Astro.props;
+const { Content } = await render(item);
+---
+
+<BaseLayout
+  title={`${item.data.title} | 智量双线`}
+  description={item.data.description}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <!-- Breadcrumb -->
+    <nav class="mb-6 flex items-center gap-2 text-xs text-slate-500 font-mono">
+      <a href={url('/')} class="hover:text-slate-900 dark:hover:text-slate-100">首页</a>
+      <span>/</span>
+      <a href={url('/news/')} class="hover:text-amber-600">快讯日报</a>
+      <span>/</span>
+      <span class="text-slate-800 dark:text-slate-200">{formatDate(item.data.date)}</span>
+    </nav>
+
+    <!-- Header Card -->
+    <header class="mb-10 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 via-white to-amber-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-amber-950/10">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500 text-white">
+          智量早报
+        </span>
+        <span class="text-xs font-mono text-slate-500">
+          {formatDate(item.data.date)}
+        </span>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight mb-4">
+        {item.data.title}
+      </h1>
+
+      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+        {item.data.description}
+      </p>
+
+      <!-- Highlights Box -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200/60 dark:border-slate-800/60">
+        <div class="p-4 rounded-xl bg-quant-50/50 dark:bg-quant-950/20 border border-quant-200/60 dark:border-quant-800/40">
+          <div class="text-xs font-bold text-quant-700 dark:text-quant-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            <span>📈</span>
+            <span>市场核心动态</span>
+          </div>
+          <ul class="space-y-1 text-xs text-slate-700 dark:text-slate-300">
+            {item.data.marketHighlights.map((h) => (
+              <li class="flex items-start gap-1.5">
+                <span class="text-quant-500 font-bold">•</span>
+                <span>{h}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-xl bg-ai-50/50 dark:bg-ai-950/20 border border-ai-200/60 dark:border-ai-800/40">
+          <div class="text-xs font-bold text-ai-700 dark:text-ai-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            <span>🤖</span>
+            <span>AI 与科技要点</span>
+          </div>
+          <ul class="space-y-1 text-xs text-slate-700 dark:text-slate-300">
+            {item.data.aiHighlights.map((h) => (
+              <li class="flex items-start gap-1.5">
+                <span class="text-ai-500 font-bold">•</span>
+                <span>{h}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <article class="prose prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-24 prose-headings:font-bold prose-a:text-teal-600 dark:prose-a:text-teal-400">
+      <Content />
+    </article>
+
+    <!-- Tags & Navigation -->
+    <footer class="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800">
+      <div class="flex flex-wrap gap-2 mb-8">
+        {item.data.tags.map((tag) => (
+          <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+            #{tag}
+          </span>
+        ))}
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {prevNews ? (
+          <a
+            href={url(`/news/${getNewsSlug(prevNews)}/`)}
+            class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 transition-all flex flex-col"
+          >
+            <span class="text-[11px] font-mono text-slate-400 mb-1">&larr; 前一期早报</span>
+            <span class="text-sm font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">{prevNews.data.title}</span>
+          </a>
+        ) : <div />}
+
+        {nextNews ? (
+          <a
+            href={url(`/news/${getNewsSlug(nextNews)}/`)}
+            class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 transition-all flex flex-col sm:text-right"
+          >
+            <span class="text-[11px] font-mono text-slate-400 mb-1">后一期早报 &rarr;</span>
+            <span class="text-sm font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">{nextNews.data.title}</span>
+          </a>
+        ) : <div />}
+      </div>
+    </footer>
+  </div>
+</BaseLayout>

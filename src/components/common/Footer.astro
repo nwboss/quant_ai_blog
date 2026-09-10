@@ -54,11 +54,13 @@ const currentYear = new Date().getFullYear();
           全站索引
         </div>
         <ul class="space-y-1.5 text-xs">
+          <li><a href={url('/news/')} class="hover:text-amber-600 font-medium">每日快讯早报</a></li>
           <li><a href={url('/blog/')} class="hover:text-slate-900 dark:hover:text-slate-100">全部文章归档</a></li>
           <li><a href={url('/tags/')} class="hover:text-slate-900 dark:hover:text-slate-100">标签归档</a></li>
           <li><a href={url('/series/')} class="hover:text-slate-900 dark:hover:text-slate-100">专栏专题路线</a></li>
           <li><a href={url('/search/')} class="hover:text-slate-900 dark:hover:text-slate-100">全文检索</a></li>
           <li><a href={url('/about/')} class="hover:text-slate-900 dark:hover:text-slate-100">关于本站</a></li>
+          <li><a href={url('/news/rss.xml')} class="hover:text-amber-600 inline-flex items-center gap-1">快讯 RSS 订阅</a></li>
           <li><a href={url('/rss.xml')} class="hover:text-amber-600 inline-flex items-center gap-1">全站 RSS 订阅</a></li>
         </ul>
       </div>

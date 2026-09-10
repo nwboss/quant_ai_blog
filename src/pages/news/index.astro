@@ -1,0 +1,191 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublicNews, getNewsSlug } from '../../lib/content';
+import { url, formatDate } from '../../lib/utils';
+import { render } from 'astro:content';
+
+const allNews = await getPublicNews();
+const latestNews = allNews[0] || null;
+const previousNews = allNews.slice(1);
+
+let LatestContent = null;
+if (latestNews) {
+  const rendered = await render(latestNews);
+  LatestContent = rendered.Content;
+}
+---
+
+<BaseLayout
+  title="快讯日报 | 每日市场与 AI 双主线投研速递"
+  description="每日追踪全球宏观权益、量化因子动向、前沿大模型与具身智能突破。每天一篇精炼早报，用数据和逻辑透视市场。"
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <!-- Header Banner -->
+    <header class="mb-12 max-w-3xl">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 mb-4">
+        <span class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span>DAILY BRIEFING &middot; 双主线每日快讯</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight mb-4">
+        快讯日报
+      </h1>
+      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+        追踪全球宏观权益、量化微观因子与前沿 AI 推理模型的每日技术早报。剔除中庸废话，只呈现高信噪比的核心信号与逻辑洞察。
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3 text-xs">
+        <span class="text-slate-500">已发布 {allNews.length} 期日报</span>
+        <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+        <a
+          href={url('/news/rss.xml')}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-medium transition-colors border border-amber-200 dark:border-amber-800/60"
+        >
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.819c10.563.061 19.121 8.612 19.183 19.181h4.817c-.062-13.226-10.763-23.937-24-24z"></path>
+          </svg>
+          <span>订阅快讯 RSS</span>
+        </a>
+      </div>
+    </header>
+
+    {latestNews ? (
+      <!-- Featured Latest Edition -->
+      <div class="mb-14">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+            今日最新速递
+          </h2>
+          <span class="text-xs text-slate-400 font-mono">
+            {formatDate(latestNews.data.date)}
+          </span>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 shadow-sm overflow-hidden">
+          <!-- Summary Header Banner -->
+          <div class="p-6 sm:p-8 bg-gradient-to-br from-slate-50 via-white to-amber-50/30 dark:from-slate-900 dark:via-slate-900/90 dark:to-amber-950/10 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500 text-white">
+                最新一期
+              </span>
+              <span class="text-xs font-mono text-slate-500">
+                {formatDate(latestNews.data.date)}
+              </span>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3 leading-snug">
+              <a href={url(`/news/${getNewsSlug(latestNews)}/`)} class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+                {latestNews.data.title}
+              </a>
+            </h3>
+
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+              {latestNews.data.description}
+            </p>
+
+            <!-- Dual-Column Highlights Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Market Highlights -->
+              <div class="p-4 rounded-xl bg-quant-50/50 dark:bg-quant-950/20 border border-quant-200/60 dark:border-quant-800/40">
+                <div class="text-xs font-bold text-quant-700 dark:text-quant-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                  <span>📈</span>
+                  <span>市场与量化要点</span>
+                </div>
+                <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                  {latestNews.data.marketHighlights.map((h) => (
+                    <li class="flex items-start gap-2">
+                      <span class="text-quant-500 font-bold">•</span>
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <!-- AI Highlights -->
+              <div class="p-4 rounded-xl bg-ai-50/50 dark:bg-ai-950/20 border border-ai-200/60 dark:border-ai-800/40">
+                <div class="text-xs font-bold text-ai-700 dark:text-ai-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                  <span>🤖</span>
+                  <span>AI 与前沿要点</span>
+                </div>
+                <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                  {latestNews.data.aiHighlights.map((h) => (
+                    <li class="flex items-start gap-2">
+                      <span class="text-ai-500 font-bold">•</span>
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Content Preview -->
+          <div class="p-6 sm:p-8">
+            <article class="prose prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-24 prose-headings:font-bold prose-a:text-teal-600 dark:prose-a:text-teal-400">
+              {LatestContent && <LatestContent />}
+            </article>
+
+            <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div class="flex flex-wrap gap-1.5">
+                {latestNews.data.tags.map((tag) => (
+                  <span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+              <a
+                href={url(`/news/${getNewsSlug(latestNews)}/`)}
+                class="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
+              >
+                <span>独立页面查看 & 分享</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null}
+
+    <!-- Timeline of Previous Editions -->
+    {previousNews.length > 0 && (
+      <div>
+        <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+          历史快讯归档
+        </h2>
+
+        <div class="space-y-4">
+          {previousNews.map((item) => {
+            const slug = getNewsSlug(item);
+            return (
+              <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+                    <span>{formatDate(item.data.date)}</span>
+                  </div>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+                    <a href={url(`/news/${slug}/`)}>
+                      {item.data.title}
+                    </a>
+                  </h3>
+                  <p class="text-xs text-slate-500 line-clamp-1">
+                    {item.data.description}
+                  </p>
+                </div>
+                <a
+                  href={url(`/news/${slug}/`)}
+                  class="shrink-0 inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
+                >
+                  <span>阅读简报</span>
+                  <span>&rarr;</span>
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>

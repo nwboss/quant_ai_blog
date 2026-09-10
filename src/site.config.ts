@@ -56,6 +56,7 @@ export const siteConfig: SiteConfig = {
     { title: '首页', href: '/' },
     { title: '量化', href: '/quant/' },
     { title: 'AI', href: '/ai/' },
+    { title: '快讯日报', href: '/news/', badge: 'Daily' },
     { title: '专题', href: '/series/' },
     { title: '全部文章', href: '/blog/' },
     { title: '关于', href: '/about/' },

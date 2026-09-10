@@ -10,6 +10,7 @@
     "build:search": "pagefind --site dist",
     "preview": "astro preview",
     "deploy": "node ./scripts/deploy-gh-pages.js",
+    "news:daily": "node ./scripts/generate-daily-news.js",
     "astro": "astro",
     "check": "astro check"
   },

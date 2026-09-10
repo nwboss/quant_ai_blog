@@ -40,7 +40,28 @@ const series = defineCollection({
   }),
 });
 
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/news' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    track: z.enum(['mixed', 'quant', 'ai']).default('mixed'),
+    marketHighlights: z.array(z.string()).default([]),
+    aiHighlights: z.array(z.string()).default([])
+,
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+    cover: z.object({
+      src: z.string(),
+      alt: z.string(),
+    }).optional(),
+  }),
+});
+
 export const collections = {
   posts,
   series,
+  news,
 };
+

@@ -2,6 +2,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type PostEntry = CollectionEntry<'posts'>;
 export type SeriesEntry = CollectionEntry<'series'>;
+export type NewsEntry = CollectionEntry<'news'>;
 
 /**
  * Extract canonical slug for a post
@@ -128,3 +129,39 @@ export const formatLabels: Record<string, string> = {
   review: '观察',
   weekly: '周报',
 };
+
+/**
+ * Extract canonical slug for a news daily report
+ */
+export function getNewsSlug(item: NewsEntry): string {
+  const idSlug = item.id.replace(/\.(md|mdx)$/, '').split('/').pop() || item.id;
+  return idSlug;
+}
+
+/**
+ * Filter public news: draft === false and date <= now
+ */
+export function isPublicNews(item: NewsEntry): boolean {
+  const isDraft = item.data.draft;
+  const isFuture = new Date(item.data.date).getTime() > Date.now() + 86400000; // allow current day
+  return !isDraft && !isFuture;
+}
+
+/**
+ * Get all public news sorted by date descending
+ */
+export async function getPublicNews(): Promise<NewsEntry[]> {
+  const allNews = await getCollection('news');
+  return allNews
+    .filter(isPublicNews)
+    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+}
+
+/**
+ * Get latest daily news report
+ */
+export async function getLatestDailyNews(): Promise<NewsEntry | null> {
+  const newsList = await getPublicNews();
+  return newsList[0] || null;
+}
+
