@@ -4,10 +4,19 @@ import path from 'path';
 
 console.log('🚀 正在准备部署到 gh-pages 分支...');
 
+console.log('📦 正在执行静态构建 (ASTRO_BASE=/quant_ai_blog)...');
+execSync('npm run build', {
+  stdio: 'inherit',
+  env: {
+    ...process.env,
+    ASTRO_BASE: '/quant_ai_blog',
+  },
+});
+
 const distDir = path.resolve('dist');
 
 if (!fs.existsSync(distDir)) {
-  console.error('❌ dist 目录不存在，请先运行 npm run build');
+  console.error('❌ dist 目录不存在，构建可能未成功');
   process.exit(1);
 }
 
