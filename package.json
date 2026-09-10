@@ -9,6 +9,7 @@
     "build:astro": "astro build",
     "build:search": "pagefind --site dist",
     "preview": "astro preview",
+    "deploy": "npm run build && node ./scripts/deploy-gh-pages.js",
     "astro": "astro",
     "check": "astro check"
   },
