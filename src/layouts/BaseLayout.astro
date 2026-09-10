@@ -1,0 +1,66 @@
+---
+import SeoHead from '../components/common/SeoHead.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  articleDate?: string;
+}
+
+const props = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <SeoHead {...props} />
+  </head>
+  <body class="min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-teal-500/20 selection:text-teal-700 dark:selection:text-teal-300">
+    <!-- Top announcement or border accent -->
+    <div class="h-1 bg-gradient-to-r from-quant-500 via-teal-400 to-ai-500"></div>
+
+    <Header />
+
+    <main class="flex-grow">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <!-- Universal code copy button injector -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre').forEach((pre) => {
+          if (pre.querySelector('.copy-code-button')) return;
+          const button = document.createElement('button');
+          button.className = 'copy-code-button';
+          button.type = 'button';
+          button.innerText = '复制';
+          button.setAttribute('aria-label', '复制代码');
+
+          button.addEventListener('click', async () => {
+            const code = pre.querySelector('code')?.innerText || pre.innerText;
+            try {
+              await navigator.clipboard.writeText(code);
+              button.innerText = '已复制!';
+              button.classList.add('bg-quant-600', 'text-white');
+              setTimeout(() => {
+                button.innerText = '复制';
+                button.classList.remove('bg-quant-600', 'text-white');
+              }, 2000);
+            } catch (err) {
+              button.innerText = '失败';
+              setTimeout(() => (button.innerText = '复制'), 2000);
+            }
+          });
+
+          pre.appendChild(button);
+        });
+      });
+    </script>
+  </body>
+</html>

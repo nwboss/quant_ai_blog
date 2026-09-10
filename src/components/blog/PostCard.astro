@@ -1,0 +1,83 @@
+---
+import type { PostEntry } from '../../lib/content';
+import { getPostSlug, formatLabels } from '../../lib/content';
+import { formatDate } from '../../lib/utils';
+import { getReadingTime } from '../../lib/readingTime';
+import TrackBadge from './TrackBadge.astro';
+
+export interface Props {
+  post: PostEntry;
+}
+
+const { post } = Astro.props;
+const slug = getPostSlug(post);
+const reading = getReadingTime(post.body || '');
+const isQuant = post.data.track === 'quant';
+---
+
+<article class="group relative flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg transition-all duration-200">
+  <div>
+    <!-- Meta badges -->
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <TrackBadge track={post.data.track} size="sm" />
+      <span class="px-2 py-0.5 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium">
+        {formatLabels[post.data.format] || post.data.format}
+      </span>
+      <span class="text-xs text-slate-400 dark:text-slate-500 ml-auto flex items-center gap-1 font-mono">
+        <time datetime={post.data.publishedAt.toISOString()}>
+          {formatDate(post.data.publishedAt)}
+        </time>
+        <span>&middot;</span>
+        <span>{reading.text}</span>
+      </span>
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">
+      <a
+        href={`/blog/${slug}/`}
+        class={`focus:outline-none ${
+          isQuant
+            ? 'group-hover:text-quant-600 dark:group-hover:text-quant-400'
+            : 'group-hover:text-ai-600 dark:group-hover:text-ai-400'
+        } transition-colors`}
+      >
+        <span class="absolute inset-0" aria-hidden="true"></span>
+        {post.data.title}
+      </a>
+    </h3>
+
+    <!-- Description -->
+    <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4">
+      {post.data.description}
+    </p>
+  </div>
+
+  <!-- Footer Tags & Status -->
+  <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between z-10">
+    <div class="flex flex-wrap gap-1.5">
+      {post.data.tags.slice(0, 3).map((tag) => (
+        <a
+          href={`/tags/${encodeURIComponent(tag)}/`}
+          class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+        >
+          #{tag}
+        </a>
+      ))}
+      {post.data.tags.length > 3 && (
+        <span class="text-xs text-slate-400">+{post.data.tags.length - 3}</span>
+      )}
+    </div>
+
+    <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+      {post.data.codeUrl && (
+        <span class="inline-flex items-center gap-1" title="附代码">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+          </svg>
+          代码
+        </span>
+      )}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,35 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import PostCard from '../../components/blog/PostCard.astro';
+import { getAllTags, getPostsByTag } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+  return tags.map((t) => ({
+    params: { tag: t.name },
+    props: { tagName: t.name, count: t.count },
+  }));
+}
+
+const { tag } = Astro.params;
+const { tagName, count } = Astro.props;
+const posts = await getPostsByTag(tag!);
+---
+
+<PageLayout
+  title={`#${tagName}`}
+  description={`包含标签“${tagName}”的全部量化与 AI 技术文章，共计 ${count} 篇。`}
+  headline="TAG FILTER"
+>
+  <div class="mb-8">
+    <a href="/tags/" class="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 font-mono">
+      &larr; 返回所有标签
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {posts.map((post) => (
+      <PostCard post={post} />
+    ))}
+  </div>
+</PageLayout>

@@ -1,0 +1,193 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TrackBadge from '../components/blog/TrackBadge.astro';
+import TableOfContents from '../components/blog/TableOfContents.astro';
+import PostCard from '../components/blog/PostCard.astro';
+import type { PostEntry } from '../lib/content';
+import { getPostSlug, formatLabels } from '../lib/content';
+import { formatDate } from '../lib/utils';
+import { getReadingTime } from '../lib/readingTime';
+
+export interface Props {
+  post: PostEntry;
+  headings: { depth: number; slug: string; text: string }[];
+  relatedPosts: PostEntry[];
+  prevPost?: PostEntry | null;
+  nextPost?: PostEntry | null;
+}
+
+const { post, headings, relatedPosts, prevPost, nextPost } = Astro.props;
+const { title, description, track, category, format, tags, publishedAt, updatedAt, sources, codeUrl } = post.data;
+
+const isQuant = track === 'quant';
+const reading = getReadingTime(post.body || '');
+const trackName = isQuant ? '量化频道' : 'AI 频道';
+const trackHref = isQuant ? '/quant/' : '/ai/';
+---
+
+<BaseLayout title={title} description={description} articleDate={publishedAt.toISOString()}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs text-slate-500 mb-8 font-mono">
+      <a href="/" class="hover:text-slate-900 dark:hover:text-slate-100">首页</a>
+      <span>/</span>
+      <a href={trackHref} class={isQuant ? 'hover:text-quant-600' : 'hover:text-ai-600'}>{trackName}</a>
+      <span>/</span>
+      <span class="text-slate-400 truncate max-w-[200px] sm:max-w-md">{title}</span>
+    </nav>
+
+    <!-- Post Header -->
+    <header class="max-w-4xl mb-12">
+      <!-- Badges and Time -->
+      <div class="flex flex-wrap items-center gap-3 mb-4 text-xs font-mono">
+        <TrackBadge track={track} size="md" />
+        <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
+          {formatLabels[format] || format}
+        </span>
+        <span class="px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+          {category}
+        </span>
+        <span class="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
+        </span>
+        {updatedAt && (
+          <span class="text-slate-400 dark:text-slate-500">
+            (更新于 {formatDate(updatedAt)})
+          </span>
+        )}
+        <span class="text-slate-500 dark:text-slate-400">&middot;</span>
+        <span class="text-slate-500 dark:text-slate-400">{reading.text}</span>
+      </div>
+
+      <!-- Main Title -->
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.2] mb-6">
+        {title}
+      </h1>
+
+      <!-- Abstract / Lead -->
+      <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border-l-4 border-l-slate-400 dark:border-l-slate-600 border border-slate-200 dark:border-slate-800 mb-6 text-slate-600 dark:text-slate-300 text-base leading-relaxed">
+        {description}
+      </div>
+
+      <!-- Quick Action: Code link -->
+      {codeUrl && (
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-mono text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+          </svg>
+          <span>配套代码：</span>
+          <a href={codeUrl} target="_blank" rel="noopener noreferrer" class="text-quant-600 dark:text-quant-400 hover:underline">
+            {codeUrl}
+          </a>
+        </div>
+      )}
+    </header>
+
+    <!-- Content Grid: Body + Table of Contents -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <!-- Main Article Prose -->
+      <div class="lg:col-span-8">
+        <!-- Mobile Table of Contents -->
+        <TableOfContents headings={headings} />
+
+        <!-- Article Content -->
+        <article class="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-teal-600 dark:prose-a:text-teal-400 prose-img:rounded-xl">
+          <slot />
+        </article>
+
+        <!-- Sources Section -->
+        {sources && sources.length > 0 && (
+          <section class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
+            <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+              </svg>
+              参考来源与文献
+            </h3>
+            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              {sources.map((src) => (
+                <li class="flex items-baseline gap-2">
+                  <span class="text-slate-400">&bull;</span>
+                  <a
+                    href={src.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 underline decoration-slate-300 dark:decoration-slate-700"
+                  >
+                    {src.title}
+                  </a>
+                  {src.accessDate && (
+                    <span class="text-xs text-slate-400 font-mono">(访问于 {src.accessDate})</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <!-- Tags at bottom -->
+        <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <a
+              href={`/tags/${encodeURIComponent(tag)}/`}
+              class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+
+        <!-- Prev / Next Navigation -->
+        <nav class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {prevPost ? (
+            <a
+              href={`/blog/${getPostSlug(prevPost)}/`}
+              class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 group transition-all"
+            >
+              <div class="text-xs text-slate-400 font-mono mb-1">&larr; 上一篇</div>
+              <div class="text-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 line-clamp-1 transition-colors">
+                {prevPost.data.title}
+              </div>
+            </a>
+          ) : (
+            <div></div>
+          )}
+
+          {nextPost && (
+            <a
+              href={`/blog/${getPostSlug(nextPost)}/`}
+              class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 group text-right transition-all"
+            >
+              <div class="text-xs text-slate-400 font-mono mb-1">下一篇 &rarr;</div>
+              <div class="text-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 line-clamp-1 transition-colors">
+                {nextPost.data.title}
+              </div>
+            </a>
+          )}
+        </nav>
+      </div>
+
+      <!-- Desktop Sidebar with TOC -->
+      <aside class="hidden lg:block lg:col-span-4 space-y-6">
+        <TableOfContents headings={headings} />
+      </aside>
+    </div>
+
+    <!-- Related Posts Recommendation -->
+    {relatedPosts.length > 0 && (
+      <section class="mt-20 pt-12 border-t border-slate-200 dark:border-slate-800">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-8">
+          推荐阅读
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {relatedPosts.map((p) => (
+            <PostCard post={p} />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>

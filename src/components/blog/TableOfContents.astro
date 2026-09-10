@@ -1,0 +1,103 @@
+---
+export interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{toc.length > 0 && (
+  <nav class="toc-container" aria-label="文章目录">
+    <!-- Mobile Accordion Header -->
+    <div class="lg:hidden mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800">
+      <details class="group">
+        <summary class="flex items-center justify-between font-semibold text-slate-800 dark:text-slate-200 cursor-pointer list-none text-sm">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path>
+            </svg>
+            目录导航
+          </span>
+          <span class="transition group-open:rotate-180">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </span>
+        </summary>
+        <ul class="mt-3 space-y-1 text-xs border-t border-slate-200 dark:border-slate-700 pt-3">
+          {toc.map((heading) => (
+            <li class={heading.depth === 3 ? 'pl-4' : ''}>
+              <a
+                href={`#${heading.slug}`}
+                class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate"
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </div>
+
+    <!-- Desktop Sticky Sidebar -->
+    <div class="hidden lg:block sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/40 text-xs">
+      <div class="font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-3 flex items-center gap-1.5 text-[11px]">
+        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path>
+        </svg>
+        本页目录
+      </div>
+      <ul class="space-y-1.5 border-l border-slate-200 dark:border-slate-800" id="desktop-toc">
+        {toc.map((heading) => (
+          <li class="relative">
+            <a
+              href={`#${heading.slug}`}
+              data-slug={heading.slug}
+              class={`toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent ${
+                heading.depth === 3 ? 'pl-6 text-slate-500 dark:text-slate-400' : 'font-medium text-slate-700 dark:text-slate-300'
+              } hover:text-slate-900 dark:hover:text-slate-100`}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}
+
+<script is:inline>
+  // Simple ScrollSpy to highlight active heading in desktop TOC
+  document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('.toc-link');
+    if (!links.length) return;
+
+    const headings = Array.from(links).map((link) => {
+      const slug = link.getAttribute('data-slug');
+      return document.getElementById(slug);
+    }).filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            links.forEach((l) => {
+              if (l.getAttribute('data-slug') === id) {
+                l.classList.add('border-slate-900', 'dark:border-slate-100', 'text-slate-900', 'dark:text-slate-100', 'font-semibold');
+                l.classList.remove('border-transparent');
+              } else {
+                l.classList.remove('border-slate-900', 'dark:border-slate-100', 'text-slate-900', 'dark:text-slate-100', 'font-semibold');
+                l.classList.add('border-transparent');
+              }
+            });
+          }
+        });
+      },
+      { rootMargin: '0px 0px -70% 0px' }
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  });
+</script>

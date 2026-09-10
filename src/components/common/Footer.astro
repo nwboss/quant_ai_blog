@@ -1,0 +1,77 @@
+---
+import { siteConfig } from '../../site.config';
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 text-sm transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <!-- Site info -->
+      <div class="md:col-span-1 space-y-3">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-md bg-gradient-to-tr from-quant-600 to-ai-600 flex items-center justify-center text-white font-bold text-xs">
+            Q
+          </div>
+          <span class="font-bold text-slate-900 dark:text-slate-100 text-base">
+            {siteConfig.title}
+          </span>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          {siteConfig.description}
+        </p>
+      </div>
+
+      <!-- Quant Track Links -->
+      <div class="space-y-3">
+        <div class="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-quant-500"></span>
+          量化投研
+        </div>
+        <ul class="space-y-1.5 text-xs">
+          <li><a href="/quant/" class="hover:text-quant-600 dark:hover:text-quant-400">量化主线概览</a></li>
+          <li><a href="/series/quant-starter-roadmap/" class="hover:text-quant-600 dark:hover:text-quant-400">量化投研实战体系</a></li>
+          <li><a href="/quant/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">量化频道 RSS</a></li>
+        </ul>
+      </div>
+
+      <!-- AI Track Links -->
+      <div class="space-y-3">
+        <div class="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-ai-500"></span>
+          人工智能
+        </div>
+        <ul class="space-y-1.5 text-xs">
+          <li><a href="/ai/" class="hover:text-ai-600 dark:hover:text-ai-400">AI 主线概览</a></li>
+          <li><a href="/series/ai-agent-investment/" class="hover:text-ai-600 dark:hover:text-ai-400">AI Agent 投研实践</a></li>
+          <li><a href="/ai/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">AI 频道 RSS</a></li>
+        </ul>
+      </div>
+
+      <!-- Navigation & Feeds -->
+      <div class="space-y-3">
+        <div class="font-semibold text-slate-900 dark:text-slate-100">
+          全站索引
+        </div>
+        <ul class="space-y-1.5 text-xs">
+          <li><a href="/blog/" class="hover:text-slate-900 dark:hover:text-slate-100">全部文章归档</a></li>
+          <li><a href="/tags/" class="hover:text-slate-900 dark:hover:text-slate-100">标签归档</a></li>
+          <li><a href="/series/" class="hover:text-slate-900 dark:hover:text-slate-100">专栏专题路线</a></li>
+          <li><a href="/search/" class="hover:text-slate-900 dark:hover:text-slate-100">全文检索</a></li>
+          <li><a href="/about/" class="hover:text-slate-900 dark:hover:text-slate-100">关于本站</a></li>
+          <li><a href="/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">全站 RSS 订阅</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom copyright -->
+    <div class="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+      <div>
+        &copy; {currentYear} {siteConfig.title}. 保留所有权利。
+      </div>
+      <div class="flex items-center gap-4">
+        <span>基于 Astro 5 &amp; Tailwind 构建</span>
+        <a href="/sitemap-index.xml" class="hover:underline">站点地图</a>
+      </div>
+    </div>
+  </div>
+</footer>

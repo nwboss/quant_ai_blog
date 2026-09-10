@@ -1,0 +1,55 @@
+---
+// SubscribeBox.astro
+---
+
+<section class="py-12">
+  <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-tr from-slate-50 via-white to-slate-50 dark:from-slate-900/60 dark:via-slate-900 dark:to-slate-900/60 p-8 sm:p-12 text-center max-w-3xl mx-auto shadow-xs">
+    <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 mb-4">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+      </svg>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight mb-3">
+      保持关注与最新订阅
+    </h2>
+    <p class="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto mb-8 leading-relaxed">
+      我们不发布营销推广内容。所有文章均经过实盘/回测环境或代码工程验证，支持标准 RSS 协议订阅与分类聚合。
+    </p>
+
+    <!-- RSS Buttons Group -->
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <a
+        href="/rss.xml"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-semibold hover:bg-slate-800 dark:hover:bg-white transition-all shadow-sm"
+      >
+        <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.819c10.563.061 19.121 8.612 19.183 19.181h4.817c-.062-13.226-10.763-23.937-24-24z"/>
+        </svg>
+        全站 RSS 源
+      </a>
+
+      <a
+        href="/quant/rss.xml"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-quant-200 dark:border-quant-800/80 bg-quant-50/50 dark:bg-quant-950/40 text-quant-800 dark:text-quant-300 text-sm font-medium hover:bg-quant-100 dark:hover:bg-quant-900/60 transition-all"
+      >
+        <span class="w-2 h-2 rounded-full bg-quant-500"></span>
+        仅订阅量化频道
+      </a>
+
+      <a
+        href="/ai/rss.xml"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-ai-200 dark:border-ai-800/80 bg-ai-50/50 dark:bg-ai-950/40 text-ai-800 dark:text-ai-300 text-sm font-medium hover:bg-ai-100 dark:hover:bg-ai-900/60 transition-all"
+      >
+        <span class="w-2 h-2 rounded-full bg-ai-500"></span>
+        仅订阅 AI 频道
+      </a>
+    </div>
+  </div>
+</section>

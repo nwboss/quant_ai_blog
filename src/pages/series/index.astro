@@ -1,0 +1,51 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import TrackBadge from '../../components/blog/TrackBadge.astro';
+import { getPublicSeries } from '../../lib/content';
+
+const seriesList = await getPublicSeries();
+---
+
+<PageLayout
+  title="专题专栏路线"
+  description="成体系的按步骤阅读路线，针对特定量化策略或 AI 投研工程进行系统性打通与实战。"
+  headline="CURATED SERIES"
+>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    {seriesList.map((series) => {
+      const slug = series.id.replace(/\.(md|mdx)$/, '');
+      return (
+        <article class="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-lg transition-all flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <TrackBadge track={series.data.track} size="sm" />
+              <span class="text-xs font-mono text-slate-400">
+                包含 {series.data.posts.length} 篇循序渐进文章
+              </span>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors mb-3">
+              <a href={`/series/${slug}/`}>
+                {series.data.title}
+              </a>
+            </h2>
+
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              {series.data.description}
+            </p>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-400">阅读指南</span>
+            <a
+              href={`/series/${slug}/`}
+              class="inline-flex items-center gap-1 text-sm font-semibold text-teal-600 dark:text-teal-400 group-hover:translate-x-1 transition-transform"
+            >
+              开启专题阅读 &rarr;
+            </a>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</PageLayout>

@@ -1,0 +1,31 @@
+---
+export interface Props {
+  track: 'quant' | 'ai' | 'mixed' | string;
+  size?: 'sm' | 'md';
+}
+
+const { track, size = 'sm' } = Astro.props;
+
+const isQuant = track === 'quant';
+const isAI = track === 'ai';
+
+const label = isQuant ? '量化投研' : isAI ? '人工智能' : '双主线交叉';
+const sizeClass = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-sm';
+---
+
+<span
+  class={`inline-flex items-center gap-1.5 font-medium rounded-full ${sizeClass} ${
+    isQuant
+      ? 'bg-quant-100 text-quant-800 dark:bg-quant-950/80 dark:text-quant-300 border border-quant-200 dark:border-quant-800/60'
+      : isAI
+      ? 'bg-ai-100 text-ai-800 dark:bg-ai-950/80 dark:text-ai-300 border border-ai-200 dark:border-ai-800/60'
+      : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+  }`}
+>
+  <span
+    class={`w-1.5 h-1.5 rounded-full ${
+      isQuant ? 'bg-quant-500' : isAI ? 'bg-ai-500' : 'bg-slate-500'
+    }`}
+  ></span>
+  {label}
+</span>

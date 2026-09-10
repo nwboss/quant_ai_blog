@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DualTrackSection from '../components/home/DualTrackSection.astro';
+import FeaturedSection from '../components/home/FeaturedSection.astro';
+import LatestDualTrackSection from '../components/home/LatestDualTrackSection.astro';
+import SeriesSection from '../components/home/SeriesSection.astro';
+import SubscribeBox from '../components/home/SubscribeBox.astro';
+import { siteConfig } from '../site.config';
+import { getPublicPosts, getTrackPosts, getFeaturedPosts, getPublicSeries } from '../lib/content';
+
+const allPosts = await getPublicPosts();
+const featuredPosts = await getFeaturedPosts();
+const quantPosts = await getTrackPosts('quant');
+const aiPosts = await getTrackPosts('ai');
+const seriesList = await getPublicSeries();
+---
+
+<BaseLayout title={siteConfig.title} description={siteConfig.description}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Hero Banner -->
+    <section class="text-center max-w-3xl mx-auto py-8 sm:py-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 mb-6">
+        <span class="inline-block w-2 h-2 rounded-full bg-teal-500"></span>
+        <span>量化与 AI 双主线投研实验手记</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-slate-100 leading-tight mb-6">
+        用代码解构市场，<br class="hidden sm:inline" />
+        以模型推演未来。
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto mb-8">
+        聚焦中文深度阅读。左手统计套利、动量轮动与因子检验，右手大模型推理、智能体工作流与工程化落地。拒绝泛泛而谈，所有推演均附严谨数据与复现代码。
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a
+          href="/quant/"
+          class="px-5 py-2.5 rounded-xl bg-quant-600 hover:bg-quant-700 text-white font-semibold text-sm shadow-sm transition-all"
+        >
+          探索量化主线
+        </a>
+        <a
+          href="/ai/"
+          class="px-5 py-2.5 rounded-xl bg-ai-600 hover:bg-ai-700 text-white font-semibold text-sm shadow-sm transition-all"
+        >
+          探索 AI 主线
+        </a>
+        <a
+          href="/blog/"
+          class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm transition-all"
+        >
+          浏览全部文章 ({allPosts.length})
+        </a>
+      </div>
+    </section>
+
+    <!-- Dual Track Equal Prominence -->
+    <DualTrackSection />
+
+    <!-- Hand-picked Featured Articles -->
+    <FeaturedSection posts={featuredPosts} />
+
+    <!-- Side-by-Side Dual-Track Latest Posts -->
+    <LatestDualTrackSection quantPosts={quantPosts} aiPosts={aiPosts} />
+
+    <!-- Curated Reading Series -->
+    <SeriesSection seriesList={seriesList} />
+
+    <!-- Subscribe callout -->
+    <SubscribeBox />
+  </div>
+</BaseLayout>

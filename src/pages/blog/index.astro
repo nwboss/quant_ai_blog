@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/blog/PostCard.astro';
+import Pagination from '../../components/blog/Pagination.astro';
+import { getPublicPosts } from '../../lib/content';
+
+const PAGE_SIZE = 6;
+const allPosts = await getPublicPosts();
+const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
+const currentPosts = allPosts.slice(0, PAGE_SIZE);
+const nextUrl = totalPages > 1 ? '/blog/page/2/' : undefined;
+---
+
+<BaseLayout
+  title="全部文章归档"
+  description="按时间倒序查阅量化研究、多因子模型、大语言模型评测与 Agent 实践的所有技术文章。"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Header -->
+    <header class="mb-10 max-w-3xl">
+      <div class="inline-flex items-center gap-2 text-xs font-mono font-medium text-slate-500 mb-3">
+        <span>ARCHIVE</span>
+        <span>&middot;</span>
+        <span>共 {allPosts.length} 篇公开文章</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
+        全部文章归档
+      </h1>
+      <p class="text-base text-slate-600 dark:text-slate-400">
+        所有研究报告与工程实践均包含严谨的数据口径、交易摩擦假设或完整复现代码。
+      </p>
+
+      <!-- Track Filters -->
+      <div class="mt-6 flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-slate-400">频道快捷切换：</span>
+        <a
+          href="/blog/"
+          class="px-3 py-1 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 font-semibold"
+        >
+          全部 ({allPosts.length})
+        </a>
+        <a
+          href="/quant/"
+          class="px-3 py-1 rounded-full bg-quant-50 dark:bg-quant-950/60 text-quant-700 dark:text-quant-300 border border-quant-200 dark:border-quant-800/60 hover:bg-quant-100 transition-colors"
+        >
+          量化主线 ({allPosts.filter(p => p.data.track === 'quant').length})
+        </a>
+        <a
+          href="/ai/"
+          class="px-3 py-1 rounded-full bg-ai-50 dark:bg-ai-950/60 text-ai-700 dark:text-ai-300 border border-ai-200 dark:border-ai-800/60 hover:bg-ai-100 transition-colors"
+        >
+          AI 主线 ({allPosts.filter(p => p.data.track === 'ai').length})
+        </a>
+      </div>
+    </header>
+
+    <!-- Post Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {currentPosts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={1}
+      lastPage={totalPages}
+      nextUrl={nextUrl}
+      baseUrl="/blog/"
+    />
+  </div>
+</BaseLayout>

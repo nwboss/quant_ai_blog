@@ -1,0 +1,75 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { siteConfig } from '../site.config';
+---
+
+<PageLayout
+  title={`关于${siteConfig.title}`}
+  description="量化研究与人工智能前沿的双主线个人技术博客，专注于可复现的数据工程、多因子模型与投研智能体落地。"
+  headline="ABOUT US"
+>
+  <div class="max-w-3xl space-y-12">
+    <!-- Mission -->
+    <section class="prose prose-slate dark:prose-invert max-w-none">
+      <h2>为什么建立这个博客？</h2>
+      <p>
+        在金融量化与人工智能快速交叉融合的时代，网络上充斥着两种极端内容：一种是充斥着前瞻偏差（Lookahead Bias）与未扣除滑点的“虚高策略回测”；另一种则是泛泛而谈、毫无工程实操细节的大模型概念炒作。
+      </p>
+      <p>
+        <strong>智量双线 (Quant & AI Lab)</strong> 旨在构建一个注重<strong>可复现性、中文深度阅读与工程严谨性</strong>的技术手记平台。所有策略推演均包含真实摩擦假设；所有 AI 实践均包含完整的提示词链与架构设计。
+      </p>
+
+      <h2>双主线定位</h2>
+      <ul>
+        <li>
+          <strong>量化频道 (Quantitative Research)</strong>：涵盖数据工程、多因子体系、动量轮动、统计套利、研报复现与风险归因。
+        </li>
+        <li>
+          <strong>AI 频道 (Artificial Intelligence)</strong>：聚焦前沿大模型、Agent 协作工作流、投研自动化与高可靠性代码生成。
+        </li>
+      </ul>
+
+      <h2>写作与验证原则</h2>
+      <ol>
+        <li><strong>无摩擦不回测</strong>：任何策略必须声明交易佣金、滑点与印花税假设；</li>
+        <li><strong>无代码不发文</strong>：核心算法与状态机流转均附最小化复现代码或开源仓库；</li>
+        <li><strong>区分引用与观点</strong>：严格标注学术论文、券商研报出处与测试基准日期；</li>
+        <li><strong>拥抱开源与开放协议</strong>：全站支持无账号门槛的公开阅读与标准 RSS 聚合。</li>
+      </ol>
+
+      <h2>技术架构</h2>
+      <p>
+        本站基于 <strong>Astro 5</strong> 静态站点生成体系打造，结合 <strong>TypeScript</strong>、<strong>Tailwind CSS</strong>、<strong>Shiki</strong> 代码高亮与 <strong>KaTeX</strong> 数学排版，具有零首屏冗余 JS 与秒开体验。
+      </p>
+    </section>
+
+    <!-- RSS & Contact Cards -->
+    <div class="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">
+        交流与反馈渠道
+      </h3>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+        如果你对博客中的因子复现代码有疑问，或者在多智能体投研落地上有合作想法，欢迎通过以下渠道交流：
+      </p>
+
+      <div class="flex flex-wrap gap-4 text-xs font-mono">
+        <a
+          href="/rss.xml"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
+        >
+          全站 RSS 源 &rarr;
+        </a>
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 transition-colors"
+        >
+          GitHub 仓库 &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

@@ -1,0 +1,120 @@
+---
+import { siteConfig } from '../../site.config';
+---
+
+<section class="py-12 border-b border-slate-200/80 dark:border-slate-800/80">
+  <div class="text-center max-w-2xl mx-auto mb-10">
+    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+      双主线投研频道
+    </h2>
+    <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+      量化与 AI 各有独立频道，保持平等视觉权重，深耕数据与模型双轮驱动。
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Quant Track Card -->
+    <div class="relative overflow-hidden rounded-3xl border border-quant-200/80 dark:border-quant-800/60 bg-gradient-to-br from-quant-50/50 via-white to-white dark:from-quant-950/20 dark:via-slate-900 dark:to-slate-900 p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-quant-100 dark:bg-quant-900/60 text-quant-800 dark:text-quant-300">
+            <span class="w-2 h-2 rounded-full bg-quant-500 animate-pulse"></span>
+            {siteConfig.tracks.quant.enName}
+          </div>
+          <a
+            href="/quant/rss.xml"
+            title="订阅量化频道 RSS"
+            class="text-slate-400 hover:text-quant-600 dark:hover:text-quant-400 p-1 rounded-lg transition-colors"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.819c10.563.061 19.121 8.612 19.183 19.181h4.817c-.062-13.226-10.763-23.937-24-24z"/>
+            </svg>
+          </a>
+        </div>
+
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-quant-600 dark:group-hover:text-quant-400 transition-colors">
+          {siteConfig.tracks.quant.name}
+        </h3>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          {siteConfig.tracks.quant.description}
+        </p>
+
+        <!-- Categories tags -->
+        <div class="mt-6 flex flex-wrap gap-2">
+          {siteConfig.tracks.quant.categories.map((cat) => (
+            <span class="text-xs px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 shadow-xs">
+              {cat.name}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+        <a
+          href="/series/quant-starter-roadmap/"
+          class="text-xs font-medium text-slate-500 hover:text-quant-600 dark:hover:text-quant-400 flex items-center gap-1"
+        >
+          <span>🎯 入门路径</span>
+        </a>
+        <a
+          href="/quant/"
+          class="inline-flex items-center gap-1 text-sm font-semibold text-quant-600 dark:text-quant-400 group-hover:translate-x-1 transition-transform"
+        >
+          进入量化频道 &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- AI Track Card -->
+    <div class="relative overflow-hidden rounded-3xl border border-ai-200/80 dark:border-ai-800/60 bg-gradient-to-br from-ai-50/50 via-white to-white dark:from-ai-950/20 dark:via-slate-900 dark:to-slate-900 p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-ai-100 dark:bg-ai-900/60 text-ai-800 dark:text-ai-300">
+            <span class="w-2 h-2 rounded-full bg-ai-500 animate-pulse"></span>
+            {siteConfig.tracks.ai.enName}
+          </div>
+          <a
+            href="/ai/rss.xml"
+            title="订阅 AI 频道 RSS"
+            class="text-slate-400 hover:text-ai-600 dark:hover:text-ai-400 p-1 rounded-lg transition-colors"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.819c10.563.061 19.121 8.612 19.183 19.181h4.817c-.062-13.226-10.763-23.937-24-24z"/>
+            </svg>
+          </a>
+        </div>
+
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-ai-600 dark:group-hover:text-ai-400 transition-colors">
+          {siteConfig.tracks.ai.name}
+        </h3>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+          {siteConfig.tracks.ai.description}
+        </p>
+
+        <!-- Categories tags -->
+        <div class="mt-6 flex flex-wrap gap-2">
+          {siteConfig.tracks.ai.categories.map((cat) => (
+            <span class="text-xs px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 shadow-xs">
+              {cat.name}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+        <a
+          href="/series/ai-agent-investment/"
+          class="text-xs font-medium text-slate-500 hover:text-ai-600 dark:hover:text-ai-400 flex items-center gap-1"
+        >
+          <span>🤖 进阶实践</span>
+        </a>
+        <a
+          href="/ai/"
+          class="inline-flex items-center gap-1 text-sm font-semibold text-ai-600 dark:text-ai-400 group-hover:translate-x-1 transition-transform"
+        >
+          进入 AI 频道 &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

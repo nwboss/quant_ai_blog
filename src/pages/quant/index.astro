@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/blog/PostCard.astro';
+import TrackBadge from '../../components/blog/TrackBadge.astro';
+import { siteConfig } from '../../site.config';
+import { getTrackPosts } from '../../lib/content';
+
+const quantPosts = await getTrackPosts('quant');
+const quantInfo = siteConfig.tracks.quant;
+---
+
+<BaseLayout
+  title={`${quantInfo.name} - ${quantInfo.enName}`}
+  description={quantInfo.description}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Channel Hero Header -->
+    <header class="p-8 sm:p-12 rounded-3xl border border-quant-200 dark:border-quant-800/60 bg-gradient-to-br from-quant-50/70 via-white to-white dark:from-quant-950/40 dark:via-slate-900 dark:to-slate-900 mb-12 shadow-xs">
+      <div class="max-w-3xl">
+        <div class="flex items-center gap-3 mb-4">
+          <TrackBadge track="quant" size="md" />
+          <span class="text-xs font-mono text-quant-700 dark:text-quant-400 font-semibold tracking-wider uppercase">
+            {quantInfo.enName}
+          </span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
+          {quantInfo.name}
+        </h1>
+
+        <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+          {quantInfo.description}
+        </p>
+
+        <!-- Category Badges -->
+        <div class="flex flex-wrap gap-2 pt-2">
+          {quantInfo.categories.map((cat) => (
+            <span
+              class="text-xs px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-2xs"
+              title={cat.description}
+            >
+              <strong class="text-quant-600 dark:text-quant-400 font-semibold">{cat.name}</strong>
+              <span class="text-slate-400 text-[11px] ml-1">· {cat.description.split('、')[0]}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-slate-200/60 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div class="flex items-center gap-4 text-slate-500">
+          <span>共发布 <strong>{quantPosts.length}</strong> 篇量化投研手记</span>
+          <a href="/series/quant-starter-roadmap/" class="text-quant-600 dark:text-quant-400 hover:underline">
+            查看量化入门路线 &rarr;
+          </a>
+        </div>
+        <a
+          href="/quant/rss.xml"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold hover:underline"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.819c10.563.061 19.121 8.612 19.183 19.181h4.817c-.062-13.226-10.763-23.937-24-24z"/>
+          </svg>
+          订阅本频道 RSS
+        </a>
+      </div>
+    </header>
+
+    <!-- Articles Grid -->
+    <section>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-6 flex items-center gap-2">
+        <span>全部量化研究文章</span>
+      </h2>
+
+      {quantPosts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {quantPosts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl">
+          <p class="text-slate-500">暂无已发布的量化研究文章</p>
+        </div>
+      )}
+    </section>
+  </div>
+</BaseLayout>
