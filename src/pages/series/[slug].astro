@@ -3,7 +3,7 @@ import { render } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import TrackBadge from '../../components/blog/TrackBadge.astro';
 import { getPublicSeries, getPublicPosts, getPostSlug, type SeriesEntry, type PostEntry } from '../../lib/content';
-import { formatDate } from '../../lib/utils';
+import { formatDate, url } from '../../lib/utils';
 import { getReadingTime } from '../../lib/readingTime';
 
 export async function getStaticPaths() {
@@ -78,7 +78,7 @@ const { Content } = await render(series);
 
               <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">
                 <a
-                  href={`/blog/${slug}/`}
+                  href={url(`/blog/${slug}/`)}
                   class="hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
                 >
                   {post.data.title}
@@ -96,7 +96,7 @@ const { Content } = await render(series);
                   ))}
                 </div>
                 <a
-                  href={`/blog/${slug}/`}
+                  href={url(`/blog/${slug}/`)}
                   class="font-semibold text-teal-600 dark:text-teal-400 hover:underline"
                 >
                   开始阅读 &rarr;

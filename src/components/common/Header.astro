@@ -1,6 +1,7 @@
 ---
 import { siteConfig } from '../../site.config';
 import ThemeToggle from './ThemeToggle.astro';
+import { url } from '../../lib/utils';
 
 const currentPath = Astro.url.pathname;
 ---
@@ -8,7 +9,7 @@ const currentPath = Astro.url.pathname;
 <header class="sticky top-0 z-40 w-full backdrop-blur border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 transition-colors">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
     <!-- Brand Logo -->
-    <a href="/" class="flex items-center gap-3 group">
+    <a href={url('/')} class="flex items-center gap-3 group">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-quant-600 via-teal-500 to-ai-600 flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:scale-105 transition-transform">
         Q
       </div>
@@ -25,13 +26,14 @@ const currentPath = Astro.url.pathname;
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex items-center gap-1 lg:gap-2">
       {siteConfig.nav.map((item) => {
-        const isActive = item.href === '/' ? currentPath === '/' : currentPath.startsWith(item.href);
+        const itemUrl = url(item.href);
+        const isActive = item.href === '/' ? currentPath === itemUrl : currentPath.startsWith(itemUrl);
         const isQuant = item.href === '/quant/';
         const isAI = item.href === '/ai/';
 
         return (
           <a
-            href={item.href}
+            href={itemUrl}
             class={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
               isActive
                 ? isQuant
@@ -52,10 +54,10 @@ const currentPath = Astro.url.pathname;
     <div class="flex items-center gap-1.5 sm:gap-2">
       <!-- Search link -->
       <a
-        href="/search/"
+        href={url('/search/')}
         aria-label="搜索全站文章"
         class={`p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${
-          currentPath.startsWith('/search') ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100' : ''
+          currentPath.includes('/search') ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100' : ''
         }`}
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -65,7 +67,7 @@ const currentPath = Astro.url.pathname;
 
       <!-- RSS Feed link -->
       <a
-        href="/rss.xml"
+        href={url('/rss.xml')}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="订阅全站 RSS"
@@ -99,10 +101,11 @@ const currentPath = Astro.url.pathname;
   <!-- Mobile Dropdown Navigation -->
   <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-1">
     {siteConfig.nav.map((item) => {
-      const isActive = item.href === '/' ? currentPath === '/' : currentPath.startsWith(item.href);
+      const itemUrl = url(item.href);
+      const isActive = item.href === '/' ? currentPath === itemUrl : currentPath.startsWith(itemUrl);
       return (
         <a
-          href={item.href}
+          href={itemUrl}
           class={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
             isActive
               ? 'text-quant-600 dark:text-quant-400 bg-quant-50 dark:bg-quant-950/50 font-semibold'
@@ -114,9 +117,9 @@ const currentPath = Astro.url.pathname;
       );
     })}
     <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-4 text-sm text-slate-500">
-      <a href="/quant/rss.xml" class="hover:text-quant-600">量化 RSS</a>
-      <a href="/ai/rss.xml" class="hover:text-ai-600">AI RSS</a>
-      <a href="/tags/" class="hover:text-slate-900 dark:hover:text-slate-100">全站标签</a>
+      <a href={url('/quant/rss.xml')} class="hover:text-quant-600">量化 RSS</a>
+      <a href={url('/ai/rss.xml')} class="hover:text-ai-600">AI RSS</a>
+      <a href={url('/tags/')} class="hover:text-slate-900 dark:hover:text-slate-100">全站标签</a>
     </div>
   </div>
 </header>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../lib/utils';
 ---
 
 <BaseLayout title="页面未找到 (404)">
@@ -18,13 +19,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <div class="flex flex-wrap items-center justify-center gap-3">
       <a
-        href="/"
+        href={url('/')}
         class="px-5 py-2.5 rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-sm font-semibold hover:bg-slate-800 transition-colors"
       >
         返回博客首页
       </a>
       <a
-        href="/search/"
+        href={url('/search/')}
         class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         站内全文检索

@@ -29,3 +29,16 @@ export function slugify(text: string): string {
     .replace(/[^\w\u4e00-\u9fa5-]+/g, '')
     .replace(/--+/g, '-');
 }
+
+/**
+ * Prefix path with Astro BASE_URL for GitHub Pages compatibility
+ */
+export function url(path: string): string {
+  if (!path || path.startsWith('http://') || path.startsWith('https://') || path.startsWith('mailto:') || path.startsWith('#')) {
+    return path;
+  }
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+  const clean = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${clean}`;
+}
+

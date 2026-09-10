@@ -1,7 +1,7 @@
 ---
 import type { PostEntry } from '../../lib/content';
 import { getPostSlug, formatLabels } from '../../lib/content';
-import { formatDate } from '../../lib/utils';
+import { formatDate, url } from '../../lib/utils';
 import { getReadingTime } from '../../lib/readingTime';
 import TrackBadge from './TrackBadge.astro';
 
@@ -35,7 +35,7 @@ const isQuant = post.data.track === 'quant';
     <!-- Title -->
     <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug">
       <a
-        href={`/blog/${slug}/`}
+        href={url(`/blog/${slug}/`)}
         class={`focus:outline-none ${
           isQuant
             ? 'group-hover:text-quant-600 dark:group-hover:text-quant-400'
@@ -58,7 +58,7 @@ const isQuant = post.data.track === 'quant';
     <div class="flex flex-wrap gap-1.5">
       {post.data.tags.slice(0, 3).map((tag) => (
         <a
-          href={`/tags/${encodeURIComponent(tag)}/`}
+          href={url(`/tags/${encodeURIComponent(tag)}/`)}
           class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
         >
           #{tag}

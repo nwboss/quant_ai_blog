@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PostCard from '../../../components/blog/PostCard.astro';
 import Pagination from '../../../components/blog/Pagination.astro';
 import { getPublicPosts } from '../../../lib/content';
+import { url } from '../../../lib/utils';
 
 export async function getStaticPaths() {
   const PAGE_SIZE = 6;
@@ -29,8 +30,8 @@ export async function getStaticPaths() {
 }
 
 const { posts, pageNum, totalPages } = Astro.props;
-const prevUrl = pageNum === 2 ? '/blog/' : `/blog/page/${pageNum - 1}/`;
-const nextUrl = pageNum < totalPages ? `/blog/page/${pageNum + 1}/` : undefined;
+const prevUrl = pageNum === 2 ? url('/blog/') : url(`/blog/page/${pageNum - 1}/`);
+const nextUrl = pageNum < totalPages ? url(`/blog/page/${pageNum + 1}/`) : undefined;
 ---
 
 <BaseLayout
@@ -41,7 +42,7 @@ const nextUrl = pageNum < totalPages ? `/blog/page/${pageNum + 1}/` : undefined;
     <!-- Header -->
     <header class="mb-10 max-w-3xl">
       <div class="inline-flex items-center gap-2 text-xs font-mono font-medium text-slate-500 mb-3">
-        <a href="/blog/" class="hover:underline">&larr; 返回首批文章</a>
+        <a href={url('/blog/')} class="hover:underline">&larr; 返回首批文章</a>
         <span>&middot;</span>
         <span>第 {pageNum} / {totalPages} 页</span>
       </div>

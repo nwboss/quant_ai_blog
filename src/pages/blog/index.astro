@@ -3,12 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/blog/PostCard.astro';
 import Pagination from '../../components/blog/Pagination.astro';
 import { getPublicPosts } from '../../lib/content';
+import { url } from '../../lib/utils';
 
 const PAGE_SIZE = 6;
 const allPosts = await getPublicPosts();
 const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
 const currentPosts = allPosts.slice(0, PAGE_SIZE);
-const nextUrl = totalPages > 1 ? '/blog/page/2/' : undefined;
+const nextUrl = totalPages > 1 ? url('/blog/page/2/') : undefined;
 ---
 
 <BaseLayout
@@ -34,19 +35,19 @@ const nextUrl = totalPages > 1 ? '/blog/page/2/' : undefined;
       <div class="mt-6 flex flex-wrap items-center gap-2 text-xs">
         <span class="text-slate-400">频道快捷切换：</span>
         <a
-          href="/blog/"
+          href={url('/blog/')}
           class="px-3 py-1 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 font-semibold"
         >
           全部 ({allPosts.length})
         </a>
         <a
-          href="/quant/"
+          href={url('/quant/')}
           class="px-3 py-1 rounded-full bg-quant-50 dark:bg-quant-950/60 text-quant-700 dark:text-quant-300 border border-quant-200 dark:border-quant-800/60 hover:bg-quant-100 transition-colors"
         >
           量化主线 ({allPosts.filter(p => p.data.track === 'quant').length})
         </a>
         <a
-          href="/ai/"
+          href={url('/ai/')}
           class="px-3 py-1 rounded-full bg-ai-50 dark:bg-ai-950/60 text-ai-700 dark:text-ai-300 border border-ai-200 dark:border-ai-800/60 hover:bg-ai-100 transition-colors"
         >
           AI 主线 ({allPosts.filter(p => p.data.track === 'ai').length})

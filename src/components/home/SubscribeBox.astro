@@ -1,5 +1,5 @@
 ---
-// SubscribeBox.astro
+import { url } from '../../lib/utils';
 ---
 
 <section class="py-12">
@@ -20,7 +20,7 @@
     <!-- RSS Buttons Group -->
     <div class="flex flex-wrap items-center justify-center gap-3">
       <a
-        href="/rss.xml"
+        href={url('/rss.xml')}
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-semibold hover:bg-slate-800 dark:hover:bg-white transition-all shadow-sm"
@@ -32,7 +32,7 @@
       </a>
 
       <a
-        href="/quant/rss.xml"
+        href={url('/quant/rss.xml')}
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-quant-200 dark:border-quant-800/80 bg-quant-50/50 dark:bg-quant-950/40 text-quant-800 dark:text-quant-300 text-sm font-medium hover:bg-quant-100 dark:hover:bg-quant-900/60 transition-all"
@@ -42,7 +42,7 @@
       </a>
 
       <a
-        href="/ai/rss.xml"
+        href={url('/ai/rss.xml')}
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-ai-200 dark:border-ai-800/80 bg-ai-50/50 dark:bg-ai-950/40 text-ai-800 dark:text-ai-300 text-sm font-medium hover:bg-ai-100 dark:hover:bg-ai-900/60 transition-all"

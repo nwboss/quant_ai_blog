@@ -1,7 +1,7 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
 import { getPublicPosts, getPostSlug, formatLabels } from '../lib/content';
-import { formatDate } from '../lib/utils';
+import { formatDate, url } from '../lib/utils';
 
 const allPosts = await getPublicPosts();
 const searchData = allPosts.map((post) => ({
@@ -11,8 +11,9 @@ const searchData = allPosts.map((post) => ({
   format: formatLabels[post.data.format] || post.data.format,
   tags: post.data.tags,
   date: formatDate(post.data.publishedAt),
-  url: `/blog/${getPostSlug(post)}/`,
+  url: url(`/blog/${getPostSlug(post)}/`),
 }));
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <PageLayout
@@ -20,7 +21,7 @@ const searchData = allPosts.map((post) => ({
   description="支持跨标题、正文、量化模型与 AI 关键词搜索。可在搜索结果中按主线频道进行筛选。"
   headline="SEARCH"
 >
-  <div class="max-w-3xl">
+  <div class="max-w-3xl" id="search-root" data-base={baseUrl}>
     <!-- Search Bar -->
     <div class="relative mb-6">
       <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
@@ -100,7 +101,9 @@ const searchData = allPosts.map((post) => ({
   // Initialize Pagefind if available (in production build)
   async function loadPagefind() {
     try {
-      pagefind = await import('/_pagefind/pagefind.js');
+      const root = document.getElementById('search-root');
+      const base = (root?.getAttribute('data-base') || '/').replace(/\/$/, '');
+      pagefind = await import(`${base}/_pagefind/pagefind.js`);
       await pagefind.init();
     } catch (e) {
       // Pagefind not found (e.g. In dev mode), fallback smoothly to rawData

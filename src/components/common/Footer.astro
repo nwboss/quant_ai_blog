@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from '../../site.config';
+import { url } from '../../lib/utils';
 const currentYear = new Date().getFullYear();
 ---
 
@@ -28,9 +29,9 @@ const currentYear = new Date().getFullYear();
           量化投研
         </div>
         <ul class="space-y-1.5 text-xs">
-          <li><a href="/quant/" class="hover:text-quant-600 dark:hover:text-quant-400">量化主线概览</a></li>
-          <li><a href="/series/quant-starter-roadmap/" class="hover:text-quant-600 dark:hover:text-quant-400">量化投研实战体系</a></li>
-          <li><a href="/quant/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">量化频道 RSS</a></li>
+          <li><a href={url('/quant/')} class="hover:text-quant-600 dark:hover:text-quant-400">量化主线概览</a></li>
+          <li><a href={url('/series/quant-starter-roadmap/')} class="hover:text-quant-600 dark:hover:text-quant-400">量化投研实战体系</a></li>
+          <li><a href={url('/quant/rss.xml')} class="hover:text-amber-600 inline-flex items-center gap-1">量化频道 RSS</a></li>
         </ul>
       </div>
 
@@ -41,9 +42,9 @@ const currentYear = new Date().getFullYear();
           人工智能
         </div>
         <ul class="space-y-1.5 text-xs">
-          <li><a href="/ai/" class="hover:text-ai-600 dark:hover:text-ai-400">AI 主线概览</a></li>
-          <li><a href="/series/ai-agent-investment/" class="hover:text-ai-600 dark:hover:text-ai-400">AI Agent 投研实践</a></li>
-          <li><a href="/ai/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">AI 频道 RSS</a></li>
+          <li><a href={url('/ai/')} class="hover:text-ai-600 dark:hover:text-ai-400">AI 主线概览</a></li>
+          <li><a href={url('/series/ai-agent-investment/')} class="hover:text-ai-600 dark:hover:text-ai-400">AI Agent 投研实践</a></li>
+          <li><a href={url('/ai/rss.xml')} class="hover:text-amber-600 inline-flex items-center gap-1">AI 频道 RSS</a></li>
         </ul>
       </div>
 
@@ -53,12 +54,12 @@ const currentYear = new Date().getFullYear();
           全站索引
         </div>
         <ul class="space-y-1.5 text-xs">
-          <li><a href="/blog/" class="hover:text-slate-900 dark:hover:text-slate-100">全部文章归档</a></li>
-          <li><a href="/tags/" class="hover:text-slate-900 dark:hover:text-slate-100">标签归档</a></li>
-          <li><a href="/series/" class="hover:text-slate-900 dark:hover:text-slate-100">专栏专题路线</a></li>
-          <li><a href="/search/" class="hover:text-slate-900 dark:hover:text-slate-100">全文检索</a></li>
-          <li><a href="/about/" class="hover:text-slate-900 dark:hover:text-slate-100">关于本站</a></li>
-          <li><a href="/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">全站 RSS 订阅</a></li>
+          <li><a href={url('/blog/')} class="hover:text-slate-900 dark:hover:text-slate-100">全部文章归档</a></li>
+          <li><a href={url('/tags/')} class="hover:text-slate-900 dark:hover:text-slate-100">标签归档</a></li>
+          <li><a href={url('/series/')} class="hover:text-slate-900 dark:hover:text-slate-100">专栏专题路线</a></li>
+          <li><a href={url('/search/')} class="hover:text-slate-900 dark:hover:text-slate-100">全文检索</a></li>
+          <li><a href={url('/about/')} class="hover:text-slate-900 dark:hover:text-slate-100">关于本站</a></li>
+          <li><a href={url('/rss.xml')} class="hover:text-amber-600 inline-flex items-center gap-1">全站 RSS 订阅</a></li>
         </ul>
       </div>
     </div>
@@ -70,7 +71,7 @@ const currentYear = new Date().getFullYear();
       </div>
       <div class="flex items-center gap-4">
         <span>基于 Astro 5 &amp; Tailwind 构建</span>
-        <a href="/sitemap-index.xml" class="hover:underline">站点地图</a>
+        <a href={url('/sitemap-index.xml')} class="hover:underline">站点地图</a>
       </div>
     </div>
   </div>

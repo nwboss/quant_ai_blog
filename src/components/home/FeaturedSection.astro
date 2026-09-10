@@ -1,6 +1,7 @@
 ---
 import type { PostEntry } from '../../lib/content';
 import PostCard from '../blog/PostCard.astro';
+import { url } from '../../lib/utils';
 
 export interface Props {
   posts: PostEntry[];
@@ -21,7 +22,7 @@ const { posts } = Astro.props;
         </p>
       </div>
       <a
-        href="/blog/"
+        href={url('/blog/')}
         class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 flex items-center gap-1"
       >
         全部文章 &rarr;

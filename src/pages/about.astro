@@ -1,6 +1,7 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
 import { siteConfig } from '../site.config';
+import { url } from '../lib/utils';
 ---
 
 <PageLayout
@@ -54,7 +55,7 @@ import { siteConfig } from '../site.config';
 
       <div class="flex flex-wrap gap-4 text-xs font-mono">
         <a
-          href="/rss.xml"
+          href={url('/rss.xml')}
           target="_blank"
           rel="noopener noreferrer"
           class="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"

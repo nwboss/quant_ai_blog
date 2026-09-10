@@ -2,6 +2,7 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import PostCard from '../../components/blog/PostCard.astro';
 import { getAllTags, getPostsByTag } from '../../lib/content';
+import { url } from '../../lib/utils';
 
 export async function getStaticPaths() {
   const tags = await getAllTags();
@@ -22,7 +23,7 @@ const posts = await getPostsByTag(tag!);
   headline="TAG FILTER"
 >
   <div class="mb-8">
-    <a href="/tags/" class="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 font-mono">
+    <a href={url('/tags/')} class="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 font-mono">
       &larr; 返回所有标签
     </a>
   </div>

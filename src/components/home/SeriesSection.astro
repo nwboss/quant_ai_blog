@@ -1,6 +1,7 @@
 ---
 import type { SeriesEntry } from '../../lib/content';
 import TrackBadge from '../blog/TrackBadge.astro';
+import { url } from '../../lib/utils';
 
 export interface Props {
   seriesList: SeriesEntry[];
@@ -21,7 +22,7 @@ const { seriesList } = Astro.props;
         </p>
       </div>
       <a
-        href="/series/"
+        href={url('/series/')}
         class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
       >
         全部专题 &rarr;
@@ -33,7 +34,7 @@ const { seriesList } = Astro.props;
         const slug = series.id.replace(/\.(md|mdx)$/, '');
         return (
           <a
-            href={`/series/${slug}/`}
+            href={url(`/series/${slug}/`)}
             class="group p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 hover:shadow-md transition-all flex flex-col justify-between"
           >
             <div>

@@ -1,4 +1,6 @@
 ---
+import { url } from '../../lib/utils';
+
 export interface Props {
   currentPage: number;
   lastPage: number;
@@ -19,7 +21,7 @@ if (lastPage <= 1) {
     <!-- Prev Button -->
     {prevUrl ? (
       <a
-        href={prevUrl}
+        href={url(prevUrl)}
         class="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +42,8 @@ if (lastPage <= 1) {
     <div class="flex items-center gap-1">
       {Array.from({ length: lastPage }, (_, i) => i + 1).map((page) => {
         const isCurrent = page === currentPage;
-        const pageUrl = page === 1 ? baseUrl : `${baseUrl.replace(/\/$/, '')}/page/${page}/`;
+        const rawPageUrl = page === 1 ? baseUrl : `${baseUrl.replace(/\/$/, '')}/page/${page}/`;
+        const pageUrl = url(rawPageUrl);
         return (
           <a
             href={pageUrl}

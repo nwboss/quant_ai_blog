@@ -5,7 +5,7 @@ import TableOfContents from '../components/blog/TableOfContents.astro';
 import PostCard from '../components/blog/PostCard.astro';
 import type { PostEntry } from '../lib/content';
 import { getPostSlug, formatLabels } from '../lib/content';
-import { formatDate } from '../lib/utils';
+import { formatDate, url } from '../lib/utils';
 import { getReadingTime } from '../lib/readingTime';
 
 export interface Props {
@@ -29,9 +29,9 @@ const trackHref = isQuant ? '/quant/' : '/ai/';
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <!-- Breadcrumbs -->
     <nav class="flex items-center gap-2 text-xs text-slate-500 mb-8 font-mono">
-      <a href="/" class="hover:text-slate-900 dark:hover:text-slate-100">首页</a>
+      <a href={url('/')} class="hover:text-slate-900 dark:hover:text-slate-100">首页</a>
       <span>/</span>
-      <a href={trackHref} class={isQuant ? 'hover:text-quant-600' : 'hover:text-ai-600'}>{trackName}</a>
+      <a href={url(trackHref)} class={isQuant ? 'hover:text-quant-600' : 'hover:text-ai-600'}>{trackName}</a>
       <span>/</span>
       <span class="text-slate-400 truncate max-w-[200px] sm:max-w-md">{title}</span>
     </nav>
@@ -132,7 +132,7 @@ const trackHref = isQuant ? '/quant/' : '/ai/';
         <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2">
           {tags.map((tag) => (
             <a
-              href={`/tags/${encodeURIComponent(tag)}/`}
+              href={url(`/tags/${encodeURIComponent(tag)}/`)}
               class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               #{tag}
@@ -144,7 +144,7 @@ const trackHref = isQuant ? '/quant/' : '/ai/';
         <nav class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {prevPost ? (
             <a
-              href={`/blog/${getPostSlug(prevPost)}/`}
+              href={url(`/blog/${getPostSlug(prevPost)}/`)}
               class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 group transition-all"
             >
               <div class="text-xs text-slate-400 font-mono mb-1">&larr; 上一篇</div>
@@ -158,7 +158,7 @@ const trackHref = isQuant ? '/quant/' : '/ai/';
 
           {nextPost && (
             <a
-              href={`/blog/${getPostSlug(nextPost)}/`}
+              href={url(`/blog/${getPostSlug(nextPost)}/`)}
               class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 group text-right transition-all"
             >
               <div class="text-xs text-slate-400 font-mono mb-1">下一篇 &rarr;</div>

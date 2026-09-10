@@ -4,8 +4,14 @@ import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
+// GitHub Pages deployment support:
+// In GitHub Actions (CI=true), default to '/quant_ai_blog'. In local dev, use '/'.
+const isCI = Boolean(process.env.CI);
+const base = process.env.ASTRO_BASE || (isCI ? '/quant_ai_blog' : '/');
+
 export default defineConfig({
-  site: 'https://blog-quant.example.com',
+  site: 'https://nwboss.github.io',
+  base: base,
   output: 'static',
   integrations: [
     tailwind({
