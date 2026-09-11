@@ -1,8 +1,7 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  # 关闭 push 自动触发，仅保留网页手动点击运行
   workflow_dispatch:
 
 # Allow GITHUB_TOKEN to deploy to GitHub Pages
