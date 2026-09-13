@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/quant_ai_blog/favicon.svg"><link rel="canonical" href="https://nwboss.github.io/quant_ai_blog/blog/agent-workflow-practice/"><meta name="generator" content="Astro v5.18.2"><!-- Primary Meta Tags --><title>投研多智能体 (Multi-Agent) 协作系统架构与落地实践 | 智量双线 | Quant &amp; AI</title><meta name="title" content="投研多智能体 (Multi-Agent) 协作系统架构与落地实践 | 智量双线 | Quant &#38; AI"><meta name="description" content="解构基于 LangGraph 与自研状态机打造的自动化金融研报阅读、因子挖掘与风险自省智能体体系。"><meta name="author" content="QuantAI Lab"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://nwboss.github.io/quant_ai_blog/blog/agent-workflow-practice/"><meta property="og:title" content="投研多智能体 (Multi-Agent) 协作系统架构与落地实践 | 智量双线 | Quant &#38; AI"><meta property="og:description" content="解构基于 LangGraph 与自研状态机打造的自动化金融研报阅读、因子挖掘与风险自省智能体体系。"><meta property="og:image" content="https://nwboss.github.io/images/og-default.png"><meta property="og:site_name" content="智量双线 | Quant &#38; AI"><meta property="article:published_time" content="2026-09-07T08:00:00.000Z"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://nwboss.github.io/quant_ai_blog/blog/agent-workflow-practice/"><meta property="twitter:title" content="投研多智能体 (Multi-Agent) 协作系统架构与落地实践 | 智量双线 | Quant &#38; AI"><meta property="twitter:description" content="解构基于 LangGraph 与自研状态机打造的自动化金融研报阅读、因子挖掘与风险自省智能体体系。"><meta property="twitter:image" content="https://nwboss.github.io/images/og-default.png"><!-- RSS Feed Links --><link rel="alternate" type="application/rss+xml" title="智量双线 | Quant &#38; AI - 全站 RSS" href="/quant_ai_blog/rss.xml"><link rel="alternate" type="application/rss+xml" title="智量双线 | Quant &#38; AI - 量化频道 RSS" href="/quant_ai_blog/quant/rss.xml"><link rel="alternate" type="application/rss+xml" title="智量双线 | Quant &#38; AI - AI 频道 RSS" href="/quant_ai_blog/ai/rss.xml"><!-- Zero-flash Theme Script --><script>
+  (function () {
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {}
+  })();
+</script><link rel="stylesheet" href="/quant_ai_blog/_astro/about.BS09f981.css"></head> <body class="min-h-screen flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-teal-500/20 selection:text-teal-700 dark:selection:text-teal-300"> <!-- Top announcement or border accent --> <div class="h-1 bg-gradient-to-r from-quant-500 via-teal-400 to-ai-500"></div> <header class="sticky top-0 z-40 w-full backdrop-blur border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 transition-colors"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Brand Logo --> <a href="/quant_ai_blog/" class="flex items-center gap-3 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-quant-600 via-teal-500 to-ai-600 flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:scale-105 transition-transform">
+Q
+</div> <div class="flex flex-col"> <span class="text-base font-bold tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-quant-600 dark:group-hover:text-quant-400 transition-colors">
+智量双线
+</span> <span class="text-[10px] tracking-wider text-slate-400 dark:text-slate-500 uppercase font-mono">
+Quant & AI Lab
+</span> </div> </a> <!-- Desktop Navigation --> <nav class="hidden md:flex items-center gap-1 lg:gap-2"> <a href="/quant_ai_blog/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60"> <span>首页</span>  </a><a href="/quant_ai_blog/quant/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60"> <span>量化</span>  </a><a href="/quant_ai_blog/ai/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60"> <span>AI</span>  </a><a href="/quant_ai_blog/news/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60"> <span>快讯日报</span> <span class="px-1.5 py-0.2 text-[10px] font-semibold uppercase tracking-wider rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60"> Daily </span> </a><a href="/quant_ai_blog/series/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60"> <span>专题</span>  </a><a href="/quant_ai_blog/blog/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800"> <span>全部文章</span>  </a><a href="/quant_ai_blog/about/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60"> <span>关于</span>  </a> </nav> <!-- Right utility icons --> <div class="flex items-center gap-1.5 sm:gap-2"> <!-- Search link --> <a href="/quant_ai_blog/search/" aria-label="搜索全站文章" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors "> <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path> </svg> </a> <!-- RSS Feed link --> <a href="/quant_ai_blog/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="订阅全站 RSS" class="p-2 rounded-lg text-slate-500 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-8.18v4.819c10.563.061 19.121 8.612 19.183 19.181h4.817c-.062-13.226-10.763-23.937-24-24z"></path> </svg> </a> <!-- Dark / Light Theme Toggle --> <button type="button" id="theme-toggle" aria-label="切换明暗主题" class="relative inline-flex items-center justify-center p-2 text-slate-500 rounded-lg hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"> <!-- Sun Icon (shown in dark mode) --> <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path> </svg> <!-- Moon Icon (shown in light mode) --> <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path> </svg> </button> <script>
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const lightIcon = document.getElementById('theme-toggle-light-icon');
+  const darkIcon = document.getElementById('theme-toggle-dark-icon');
+
+  function updateIcons() {
+    const isDark = document.documentElement.classList.contains('dark');
+    if (isDark) {
+      lightIcon?.classList.remove('hidden');
+      darkIcon?.classList.add('hidden');
+    } else {
+      lightIcon?.classList.add('hidden');
+      darkIcon?.classList.remove('hidden');
+    }
+  }
+
+  updateIcons();
+
+  themeToggleBtn?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateIcons();
+  });
+</script> <!-- Mobile hamburger menu button --> <button type="button" id="mobile-menu-btn" aria-label="展开菜单" class="md:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"> <svg id="hamburger-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <svg id="hamburger-close" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </div> <!-- Mobile Dropdown Navigation --> <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-1"> <a href="/quant_ai_blog/" class="block px-3 py-2 rounded-md text-base font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/quant_ai_blog/quant/" class="block px-3 py-2 rounded-md text-base font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"> 量化 </a><a href="/quant_ai_blog/ai/" class="block px-3 py-2 rounded-md text-base font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"> AI </a><a href="/quant_ai_blog/news/" class="block px-3 py-2 rounded-md text-base font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"> 快讯日报 </a><a href="/quant_ai_blog/series/" class="block px-3 py-2 rounded-md text-base font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"> 专题 </a><a href="/quant_ai_blog/blog/" class="block px-3 py-2 rounded-md text-base font-medium transition-colors text-quant-600 dark:text-quant-400 bg-quant-50 dark:bg-quant-950/50 font-semibold"> 全部文章 </a><a href="/quant_ai_blog/about/" class="block px-3 py-2 rounded-md text-base font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"> 关于 </a> <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-4 text-sm text-slate-500"> <a href="/quant_ai_blog/quant/rss.xml" class="hover:text-quant-600">量化 RSS</a> <a href="/quant_ai_blog/ai/rss.xml" class="hover:text-ai-600">AI RSS</a> <a href="/quant_ai_blog/news/rss.xml" class="hover:text-amber-600">快讯 RSS</a> <a href="/quant_ai_blog/tags/" class="hover:text-slate-900 dark:hover:text-slate-100">全站标签</a> </div> </div> </header> <script>
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const openIcon = document.getElementById('hamburger-open');
+  const closeIcon = document.getElementById('hamburger-close');
+
+  menuBtn?.addEventListener('click', () => {
+    const isExpanded = menu?.classList.toggle('hidden');
+    if (!isExpanded) {
+      openIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+    } else {
+      openIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+    }
+  });
+</script> <main class="flex-grow">  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"> <!-- Breadcrumbs --> <nav class="flex items-center gap-2 text-xs text-slate-500 mb-8 font-mono"> <a href="/quant_ai_blog/" class="hover:text-slate-900 dark:hover:text-slate-100">首页</a> <span>/</span> <a href="/quant_ai_blog/ai/" class="hover:text-ai-600">AI 频道</a> <span>/</span> <span class="text-slate-400 truncate max-w-[200px] sm:max-w-md">投研多智能体 (Multi-Agent) 协作系统架构与落地实践</span> </nav> <!-- Post Header --> <header class="max-w-4xl mb-12"> <!-- Badges and Time --> <div class="flex flex-wrap items-center gap-3 mb-4 text-xs font-mono"> <span class="inline-flex items-center gap-1.5 font-medium rounded-full px-3 py-1 text-sm bg-ai-100 text-ai-800 dark:bg-ai-950/80 dark:text-ai-300 border border-ai-200 dark:border-ai-800/60"> <span class="w-1.5 h-1.5 rounded-full bg-ai-500"></span> 人工智能 </span> <span class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"> 研究 </span> <span class="px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400"> agent-workflows </span> <span class="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"> <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path> </svg> <time datetime="2026-09-07T08:00:00.000Z">2026-09-07</time> </span> <span class="text-slate-400 dark:text-slate-500">
+(更新于 2026-09-08)
+</span> <span class="text-slate-500 dark:text-slate-400">&middot;</span> <span class="text-slate-500 dark:text-slate-400">3 分钟阅读</span> </div> <!-- Main Title --> <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.2] mb-6"> 投研多智能体 (Multi-Agent) 协作系统架构与落地实践 </h1> <!-- Abstract / Lead --> <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border-l-4 border-l-slate-400 dark:border-l-slate-600 border border-slate-200 dark:border-slate-800 mb-6 text-slate-600 dark:text-slate-300 text-base leading-relaxed"> 解构基于 LangGraph 与自研状态机打造的自动化金融研报阅读、因子挖掘与风险自省智能体体系。 </div> <!-- Quick Action: Code link --> <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-mono text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"> <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path> </svg> <span>配套代码：</span> <a href="https://github.com/example/ai-fin-agent" target="_blank" rel="noopener noreferrer" class="text-quant-600 dark:text-quant-400 hover:underline"> https://github.com/example/ai-fin-agent </a> </div> </header> <!-- Content Grid: Body + Table of Contents --> <div class="grid grid-cols-1 lg:grid-cols-12 gap-12"> <!-- Main Article Prose --> <div class="lg:col-span-8"> <!-- Mobile Table of Contents --> <nav class="toc-container" aria-label="文章目录"><!-- Mobile Accordion Header --><div class="lg:hidden mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800"><details class="group"><summary class="flex items-center justify-between font-semibold text-slate-800 dark:text-slate-200 cursor-pointer list-none text-sm"><span class="flex items-center gap-2"><svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+目录导航
+</span><span class="transition group-open:rotate-180"><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span></summary><ul class="mt-3 space-y-1 text-xs border-t border-slate-200 dark:border-slate-700 pt-3"><li class><a href="#1-投研多智能体系统拓扑" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">1. 投研多智能体系统拓扑</a></li><li class><a href="#2-状态机与通信协议" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">2. 状态机与通信协议</a></li><li class><a href="#3-关键控制流与死循环熔断机制" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">3. 关键控制流与死循环熔断机制</a></li><li class><a href="#4-成本与吞吐量实测数据" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">4. 成本与吞吐量实测数据</a></li></ul></details></div><!-- Desktop Sticky Sidebar --><div class="hidden lg:block sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/40 text-xs"><div class="font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-3 flex items-center gap-1.5 text-[11px]"><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+本页目录
+</div><ul class="space-y-1.5 border-l border-slate-200 dark:border-slate-800" id="desktop-toc"><li class="relative"><a href="#1-投研多智能体系统拓扑" data-slug="1-投研多智能体系统拓扑" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">1. 投研多智能体系统拓扑</a></li><li class="relative"><a href="#2-状态机与通信协议" data-slug="2-状态机与通信协议" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">2. 状态机与通信协议</a></li><li class="relative"><a href="#3-关键控制流与死循环熔断机制" data-slug="3-关键控制流与死循环熔断机制" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">3. 关键控制流与死循环熔断机制</a></li><li class="relative"><a href="#4-成本与吞吐量实测数据" data-slug="4-成本与吞吐量实测数据" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">4. 成本与吞吐量实测数据</a></li></ul></div></nav><script>
+  // Simple ScrollSpy to highlight active heading in desktop TOC
+  document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('.toc-link');
+    if (!links.length) return;
+
+    const headings = Array.from(links).map((link) => {
+      const slug = link.getAttribute('data-slug');
+      return document.getElementById(slug);
+    }).filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            links.forEach((l) => {
+              if (l.getAttribute('data-slug') === id) {
+                l.classList.add('border-slate-900', 'dark:border-slate-100', 'text-slate-900', 'dark:text-slate-100', 'font-semibold');
+                l.classList.remove('border-transparent');
+              } else {
+                l.classList.remove('border-slate-900', 'dark:border-slate-100', 'text-slate-900', 'dark:text-slate-100', 'font-semibold');
+                l.classList.add('border-transparent');
+              }
+            });
+          }
+        });
+      },
+      { rootMargin: '0px 0px -70% 0px' }
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  });
+</script> <!-- Article Content --> <article class="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-teal-600 dark:prose-a:text-teal-400 prose-img:rounded-xl">  <p>随着大语言模型（LLM）从单纯的单次问答交互走向具有自主推理、工具调用与长链路规划能力的智能体（Agent），金融量化与基本面投研迎来了真正的范式跃迁。</p>
+<p>传统的自动化脚本往往面临“脆弱性”痛点：网页结构一变、财报披露格式一变、或者异构数据源产生缺失值，硬编码的管道（Pipeline）就会崩塌。而将大模型注入状态图（State Graph），赋予不同智能体专业分工与互检自省能力，能够显著提高系统的自愈性与研究深度。</p>
+<h2 id="1-投研多智能体系统拓扑">1. 投研多智能体系统拓扑</h2>
+<p>在我们的工程实践中，设计了一个四节点闭环协作拓扑：</p>
+<ol>
+<li><strong>Information Retrieval Agent (检索智能体)</strong>：负责公告、券商研报、新闻及 L1 行情抓取与结构化清洗；</li>
+<li><strong>Hypothesis Generator Agent (假设生成智能体)</strong>：根据市场动态和学术论文，形式化描述具备交易逻辑的投资假设；</li>
+<li><strong>Quant Coder Agent (代码生成智能体)</strong>：将自然语言投资假设转化为经过语法与边界条件校验的 Python 因子计算代码；</li>
+<li><strong>Risk &#x26; Critic Agent (风控与反思智能体)</strong>：分析回测报告中的最大回撤、过拟合嫌疑（如 P-hacking）以及交易摩擦假设是否过于理想。</li>
+</ol>
+<h2 id="2-状态机与通信协议">2. 状态机与通信协议</h2>
+<p>智能体之间的通信基于强类型上下文上下文流转（Typed Dict State）：</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F47067">from</span><span style="color:#ADBAC7"> typing </span><span style="color:#F47067">import</span><span style="color:#ADBAC7"> TypedDict, List, Optional</span></span>
+<span class="line"><span style="color:#F47067">from</span><span style="color:#ADBAC7"> pydantic </span><span style="color:#F47067">import</span><span style="color:#ADBAC7"> BaseModel, Field</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F47067">class</span><span style="color:#F69D50"> FactorHypothesis</span><span style="color:#ADBAC7">(</span><span style="color:#6CB6FF">BaseModel</span><span style="color:#ADBAC7">):</span></span>
+<span class="line"><span style="color:#ADBAC7">    name: </span><span style="color:#6CB6FF">str</span><span style="color:#F47067"> =</span><span style="color:#ADBAC7"> Field(</span><span style="color:#F69D50">description</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"因子名称"</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"><span style="color:#ADBAC7">    rationale: </span><span style="color:#6CB6FF">str</span><span style="color:#F47067"> =</span><span style="color:#ADBAC7"> Field(</span><span style="color:#F69D50">description</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"经济学逻辑与直觉解释"</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"><span style="color:#ADBAC7">    formula_latex: </span><span style="color:#6CB6FF">str</span><span style="color:#F47067"> =</span><span style="color:#ADBAC7"> Field(</span><span style="color:#F69D50">description</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"数学表达式 LaTeX"</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"><span style="color:#ADBAC7">    target_asset: </span><span style="color:#6CB6FF">str</span><span style="color:#F47067"> =</span><span style="color:#ADBAC7"> Field(</span><span style="color:#F69D50">description</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"适用资产类别"</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F47067">class</span><span style="color:#F69D50"> QuantWorkflowState</span><span style="color:#ADBAC7">(</span><span style="color:#6CB6FF">TypedDict</span><span style="color:#ADBAC7">):</span></span>
+<span class="line"><span style="color:#ADBAC7">    research_query: </span><span style="color:#6CB6FF">str</span></span>
+<span class="line"><span style="color:#ADBAC7">    gathered_docs: List[</span><span style="color:#6CB6FF">str</span><span style="color:#ADBAC7">]</span></span>
+<span class="line"><span style="color:#ADBAC7">    hypothesis: Optional[FactorHypothesis]</span></span>
+<span class="line"><span style="color:#ADBAC7">    code_snippet: Optional[</span><span style="color:#6CB6FF">str</span><span style="color:#ADBAC7">]</span></span>
+<span class="line"><span style="color:#ADBAC7">    backtest_metrics: Optional[</span><span style="color:#6CB6FF">dict</span><span style="color:#ADBAC7">]</span></span>
+<span class="line"><span style="color:#ADBAC7">    review_comments: List[</span><span style="color:#6CB6FF">str</span><span style="color:#ADBAC7">]</span></span>
+<span class="line"><span style="color:#ADBAC7">    iteration_count: </span><span style="color:#6CB6FF">int</span></span>
+<span class="line"><span style="color:#ADBAC7">    is_approved: </span><span style="color:#6CB6FF">bool</span></span></code></pre>
+<h2 id="3-关键控制流与死循环熔断机制">3. 关键控制流与死循环熔断机制</h2>
+<p>在多智能体交互中，最常见的风险是 <strong>Critic Agent 与 Coder Agent 陷入无休止的代码修复拉锯</strong>。我们引入了确定性的状态判定器：</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F47067">def</span><span style="color:#DCBDFB"> should_continue_iteration</span><span style="color:#ADBAC7">(state: QuantWorkflowState) -> </span><span style="color:#6CB6FF">str</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#768390">    # 达到最大尝试轮次，强制熔断并人工介入</span></span>
+<span class="line"><span style="color:#F47067">    if</span><span style="color:#ADBAC7"> state[</span><span style="color:#96D0FF">"iteration_count"</span><span style="color:#ADBAC7">] </span><span style="color:#F47067">>=</span><span style="color:#6CB6FF"> 3</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#F47067">        return</span><span style="color:#96D0FF"> "human_review"</span></span>
+<span class="line"><span style="color:#ADBAC7">    </span></span>
+<span class="line"><span style="color:#768390">    # 策略通过硬性指标门槛</span></span>
+<span class="line"><span style="color:#F47067">    if</span><span style="color:#ADBAC7"> state.get(</span><span style="color:#96D0FF">"is_approved"</span><span style="color:#ADBAC7">, </span><span style="color:#6CB6FF">False</span><span style="color:#ADBAC7">):</span></span>
+<span class="line"><span style="color:#F47067">        return</span><span style="color:#96D0FF"> "deploy_simulation"</span></span>
+<span class="line"><span style="color:#ADBAC7">    </span></span>
+<span class="line"><span style="color:#768390">    # 存在修改意见，返回修复代码</span></span>
+<span class="line"><span style="color:#F47067">    return</span><span style="color:#96D0FF"> "refine_code"</span></span></code></pre>
+<h2 id="4-成本与吞吐量实测数据">4. 成本与吞吐量实测数据</h2>
+<p>经过 100 篇券商深度金工研报复现的压力测试：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">测试维度</th><th align="left">纯人工复现</th><th align="left">单智能体 (Zero-shot)</th><th align="left">多智能体自省系统</th></tr></thead><tbody><tr><td align="left"><strong>单篇平均耗时</strong></td><td align="left">6 ~ 8 小时</td><td align="left">3 分钟</td><td align="left"><strong>12 分钟 (含多轮自检)</strong></td></tr><tr><td align="left"><strong>代码首次可运行率</strong></td><td align="left">98%</td><td align="left">42%</td><td align="left"><strong>89%</strong></td></tr><tr><td align="left"><strong>经济学逻辑合理性</strong></td><td align="left">优秀</td><td align="left">较差 (常有前瞻偏差)</td><td align="left"><strong>良好 (经过风控规则过滤)</strong></td></tr><tr><td align="left"><strong>单次运行 Token 成本</strong></td><td align="left">-</td><td align="left">$0.08</td><td align="left"><strong>$0.35</strong></td></tr></tbody></table>
+<p>多智能体系统虽然多消耗了约 4 倍的 Token 成本，但将因子代码的最终可用率从 42% 骤升至 89%，极大地降低了算法工程师的人工审阅负担。</p>  </article> <!-- Sources Section --> <section class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800"> <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2"> <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path> </svg>
+参考来源与文献
+</h3> <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400"> <li class="flex items-baseline gap-2"> <span class="text-slate-400">&bull;</span> <a href="https://python.langchain.com" target="_blank" rel="noopener noreferrer" class="text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 underline decoration-slate-300 dark:decoration-slate-700"> LangGraph: Multi-Agent Workflows Overview </a>  </li><li class="flex items-baseline gap-2"> <span class="text-slate-400">&bull;</span> <a href="https://arxiv.org/abs/2401.00000" target="_blank" rel="noopener noreferrer" class="text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 underline decoration-slate-300 dark:decoration-slate-700"> Financial Multi-Agent Architecture Research </a>  </li> </ul> </section> <!-- Tags at bottom --> <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2"> <a href="/quant_ai_blog/tags/AI%20Agent/" class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#AI Agent </a><a href="/quant_ai_blog/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#多智能体 </a><a href="/quant_ai_blog/tags/LangGraph/" class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#LangGraph </a><a href="/quant_ai_blog/tags/%E6%8A%95%E7%A0%94%E8%87%AA%E5%8A%A8%E5%8C%96/" class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#投研自动化 </a><a href="/quant_ai_blog/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#大模型 </a> </div> <!-- Prev / Next Navigation --> <nav class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4"> <a href="/quant_ai_blog/blog/alpha-factor-ic-decay/" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 group transition-all"> <div class="text-xs text-slate-400 font-mono mb-1">&larr; 上一篇</div> <div class="text-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 line-clamp-1 transition-colors"> Alpha 因子研究实战：信息系数 (IC) 与因子衰减分析 </div> </a> <a href="/quant_ai_blog/blog/etf-momentum-validation/" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 group text-right transition-all"> <div class="text-xs text-slate-400 font-mono mb-1">下一篇 &rarr;</div> <div class="text-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 line-clamp-1 transition-colors"> ETF 动量轮动：从假设到回测验证 </div> </a> </nav> </div> <!-- Desktop Sidebar with TOC --> <aside class="hidden lg:block lg:col-span-4 space-y-6"> <nav class="toc-container" aria-label="文章目录"><!-- Mobile Accordion Header --><div class="lg:hidden mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800"><details class="group"><summary class="flex items-center justify-between font-semibold text-slate-800 dark:text-slate-200 cursor-pointer list-none text-sm"><span class="flex items-center gap-2"><svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+目录导航
+</span><span class="transition group-open:rotate-180"><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span></summary><ul class="mt-3 space-y-1 text-xs border-t border-slate-200 dark:border-slate-700 pt-3"><li class><a href="#1-投研多智能体系统拓扑" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">1. 投研多智能体系统拓扑</a></li><li class><a href="#2-状态机与通信协议" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">2. 状态机与通信协议</a></li><li class><a href="#3-关键控制流与死循环熔断机制" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">3. 关键控制流与死循环熔断机制</a></li><li class><a href="#4-成本与吞吐量实测数据" class="block py-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors truncate">4. 成本与吞吐量实测数据</a></li></ul></details></div><!-- Desktop Sticky Sidebar --><div class="hidden lg:block sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto p-4 rounded-xl border border-slate-200/60 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/40 text-xs"><div class="font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-3 flex items-center gap-1.5 text-[11px]"><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+本页目录
+</div><ul class="space-y-1.5 border-l border-slate-200 dark:border-slate-800" id="desktop-toc"><li class="relative"><a href="#1-投研多智能体系统拓扑" data-slug="1-投研多智能体系统拓扑" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">1. 投研多智能体系统拓扑</a></li><li class="relative"><a href="#2-状态机与通信协议" data-slug="2-状态机与通信协议" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">2. 状态机与通信协议</a></li><li class="relative"><a href="#3-关键控制流与死循环熔断机制" data-slug="3-关键控制流与死循环熔断机制" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">3. 关键控制流与死循环熔断机制</a></li><li class="relative"><a href="#4-成本与吞吐量实测数据" data-slug="4-成本与吞吐量实测数据" class="toc-link block pl-3 py-1 transition-colors truncate border-l-2 -ml-[2px] border-transparent font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">4. 成本与吞吐量实测数据</a></li></ul></div></nav><script>
+  // Simple ScrollSpy to highlight active heading in desktop TOC
+  document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('.toc-link');
+    if (!links.length) return;
+
+    const headings = Array.from(links).map((link) => {
+      const slug = link.getAttribute('data-slug');
+      return document.getElementById(slug);
+    }).filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            links.forEach((l) => {
+              if (l.getAttribute('data-slug') === id) {
+                l.classList.add('border-slate-900', 'dark:border-slate-100', 'text-slate-900', 'dark:text-slate-100', 'font-semibold');
+                l.classList.remove('border-transparent');
+              } else {
+                l.classList.remove('border-slate-900', 'dark:border-slate-100', 'text-slate-900', 'dark:text-slate-100', 'font-semibold');
+                l.classList.add('border-transparent');
+              }
+            });
+          }
+        });
+      },
+      { rootMargin: '0px 0px -70% 0px' }
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  });
+</script> </aside> </div> <!-- Related Posts Recommendation --> <section class="mt-20 pt-12 border-t border-slate-200 dark:border-slate-800"> <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-8">
+推荐阅读
+</h2> <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> <article class="group relative flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg transition-all duration-200"> <div> <!-- Meta badges --> <div class="flex flex-wrap items-center gap-2 mb-3"> <span class="inline-flex items-center gap-1.5 font-medium rounded-full px-2 py-0.5 text-xs bg-ai-100 text-ai-800 dark:bg-ai-950/80 dark:text-ai-300 border border-ai-200 dark:border-ai-800/60"> <span class="w-1.5 h-1.5 rounded-full bg-ai-500"></span> 人工智能 </span> <span class="px-2 py-0.5 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium"> 观察 </span> <span class="text-xs text-slate-400 dark:text-slate-500 ml-auto flex items-center gap-1 font-mono"> <time datetime="2026-09-10T08:00:00.000Z"> 2026-09-10 </time> <span>&middot;</span> <span>9 分钟阅读</span> </span> </div> <!-- Title --> <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug"> <a href="/quant_ai_blog/blog/alpha-r1-paper-analysis/" class="focus:outline-none group-hover:text-ai-600 dark:group-hover:text-ai-400 transition-colors"> <span class="absolute inset-0" aria-hidden="true"></span> Alpha-R1 论文深度解析：用大模型强化学习重构量化因子筛选与语义门控 </a> </h3> <!-- Description --> <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4"> 财跃星辰联合上海交大重磅开源 Alpha-R1。本文深度拆解其 8B 经济推理模型、独创的语义门控（Semantic Gating）机制、GRPO 强化学习架构及其实盘避坑思考。 </p> </div> <!-- Footer Tags & Status --> <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between z-10"> <div class="flex flex-wrap gap-1.5"> <a href="/quant_ai_blog/tags/Alpha-R1/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#Alpha-R1 </a><a href="/quant_ai_blog/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#强化学习 </a><a href="/quant_ai_blog/tags/GRPO/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#GRPO </a> <span class="text-xs text-slate-400">+4</span> </div> <div class="flex items-center gap-2 text-xs text-slate-400 font-mono"> <span class="inline-flex items-center gap-1" title="附代码"> <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path> </svg>
+代码
+</span> </div> </div> </article><article class="group relative flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg transition-all duration-200"> <div> <!-- Meta badges --> <div class="flex flex-wrap items-center gap-2 mb-3"> <span class="inline-flex items-center gap-1.5 font-medium rounded-full px-2 py-0.5 text-xs bg-ai-100 text-ai-800 dark:bg-ai-950/80 dark:text-ai-300 border border-ai-200 dark:border-ai-800/60"> <span class="w-1.5 h-1.5 rounded-full bg-ai-500"></span> 人工智能 </span> <span class="px-2 py-0.5 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium"> 评测 </span> <span class="text-xs text-slate-400 dark:text-slate-500 ml-auto flex items-center gap-1 font-mono"> <time datetime="2026-09-05T03:20:00.000Z"> 2026-09-05 </time> <span>&middot;</span> <span>3 分钟阅读</span> </span> </div> <!-- Title --> <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug"> <a href="/quant_ai_blog/blog/deepseek-r1-financial-reasoning/" class="focus:outline-none group-hover:text-ai-600 dark:group-hover:text-ai-400 transition-colors"> <span class="absolute inset-0" aria-hidden="true"></span> 推理大模型在金融逻辑推演与财报分析中的能力评测 </a> </h3> <!-- Description --> <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4"> 深度测试长思考链（Reasoning LLM）在复杂会计科目钩稽关系、非标研报推演与隐含风险识别中的真实表现。 </p> </div> <!-- Footer Tags & Status --> <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between z-10"> <div class="flex flex-wrap gap-1.5"> <a href="/quant_ai_blog/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E8%AF%84%E6%B5%8B/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#大模型评测 </a><a href="/quant_ai_blog/tags/%E6%8E%A8%E7%90%86%E6%A8%A1%E5%9E%8B/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#推理模型 </a><a href="/quant_ai_blog/tags/%E9%87%91%E8%9E%8D%E5%88%86%E6%9E%90/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#金融分析 </a> <span class="text-xs text-slate-400">+2</span> </div> <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">  </div> </div> </article><article class="group relative flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-lg transition-all duration-200"> <div> <!-- Meta badges --> <div class="flex flex-wrap items-center gap-2 mb-3"> <span class="inline-flex items-center gap-1.5 font-medium rounded-full px-2 py-0.5 text-xs bg-quant-100 text-quant-800 dark:bg-quant-950/80 dark:text-quant-300 border border-quant-200 dark:border-quant-800/60"> <span class="w-1.5 h-1.5 rounded-full bg-quant-500"></span> 量化投研 </span> <span class="px-2 py-0.5 text-xs rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium"> 教程 </span> <span class="text-xs text-slate-400 dark:text-slate-500 ml-auto flex items-center gap-1 font-mono"> <time datetime="2026-09-10T06:40:00.000Z"> 2026-09-10 </time> <span>&middot;</span> <span>6 分钟阅读</span> </span> </div> <!-- Title --> <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug"> <a href="/quant_ai_blog/blog/options-strategy-guide/" class="focus:outline-none group-hover:text-quant-600 dark:group-hover:text-quant-400 transition-colors"> <span class="absolute inset-0" aria-hidden="true"></span> 期权量化策略学习指南：希腊字母、波动率曲面与经典组合实战 </a> </h3> <!-- Description --> <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4"> 从非线性衍生品定价原理出发，系统拆解 BSM 模型、四大核心希腊字母动态特征，并详解备兑、价差与铁秃鹰等经典期权组合的构建逻辑与代码实现。 </p> </div> <!-- Footer Tags & Status --> <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between z-10"> <div class="flex flex-wrap gap-1.5"> <a href="/quant_ai_blog/tags/%E6%9C%9F%E6%9D%83%E7%AD%96%E7%95%A5/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#期权策略 </a><a href="/quant_ai_blog/tags/BSM%E6%A8%A1%E5%9E%8B/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#BSM模型 </a><a href="/quant_ai_blog/tags/%E5%B8%8C%E8%85%8A%E5%AD%97%E6%AF%8D/" class="text-xs px-2 py-0.5 rounded text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+#希腊字母 </a> <span class="text-xs text-slate-400">+3</span> </div> <div class="flex items-center gap-2 text-xs text-slate-400 font-mono"> <span class="inline-flex items-center gap-1" title="附代码"> <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path> </svg>
+代码
+</span> </div> </div> </article> </div> </section> </div>  </main> <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 text-sm transition-colors"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8"> <!-- Site info --> <div class="md:col-span-1 space-y-3"> <div class="flex items-center gap-2"> <div class="w-6 h-6 rounded-md bg-gradient-to-tr from-quant-600 to-ai-600 flex items-center justify-center text-white font-bold text-xs">
+Q
+</div> <span class="font-bold text-slate-900 dark:text-slate-100 text-base"> 智量双线 | Quant &amp; AI </span> </div> <p class="text-xs text-slate-500 leading-relaxed"> 建设以中文阅读为主的量化与人工智能双主线个人技术博客，持续分享因子研究、策略回测、Agent 工作流与模型实战。 </p> </div> <!-- Quant Track Links --> <div class="space-y-3"> <div class="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5"> <span class="w-2 h-2 rounded-full bg-quant-500"></span>
+量化投研
+</div> <ul class="space-y-1.5 text-xs"> <li><a href="/quant_ai_blog/quant/" class="hover:text-quant-600 dark:hover:text-quant-400">量化主线概览</a></li> <li><a href="/quant_ai_blog/series/quant-starter-roadmap/" class="hover:text-quant-600 dark:hover:text-quant-400">量化投研实战体系</a></li> <li><a href="/quant_ai_blog/quant/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">量化频道 RSS</a></li> </ul> </div> <!-- AI Track Links --> <div class="space-y-3"> <div class="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5"> <span class="w-2 h-2 rounded-full bg-ai-500"></span>
+人工智能
+</div> <ul class="space-y-1.5 text-xs"> <li><a href="/quant_ai_blog/ai/" class="hover:text-ai-600 dark:hover:text-ai-400">AI 主线概览</a></li> <li><a href="/quant_ai_blog/series/ai-agent-investment/" class="hover:text-ai-600 dark:hover:text-ai-400">AI Agent 投研实践</a></li> <li><a href="/quant_ai_blog/ai/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">AI 频道 RSS</a></li> </ul> </div> <!-- Navigation & Feeds --> <div class="space-y-3"> <div class="font-semibold text-slate-900 dark:text-slate-100">
+全站索引
+</div> <ul class="space-y-1.5 text-xs"> <li><a href="/quant_ai_blog/news/" class="hover:text-amber-600 font-medium">每日快讯早报</a></li> <li><a href="/quant_ai_blog/blog/" class="hover:text-slate-900 dark:hover:text-slate-100">全部文章归档</a></li> <li><a href="/quant_ai_blog/tags/" class="hover:text-slate-900 dark:hover:text-slate-100">标签归档</a></li> <li><a href="/quant_ai_blog/series/" class="hover:text-slate-900 dark:hover:text-slate-100">专栏专题路线</a></li> <li><a href="/quant_ai_blog/search/" class="hover:text-slate-900 dark:hover:text-slate-100">全文检索</a></li> <li><a href="/quant_ai_blog/about/" class="hover:text-slate-900 dark:hover:text-slate-100">关于本站</a></li> <li><a href="/quant_ai_blog/news/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">快讯 RSS 订阅</a></li> <li><a href="/quant_ai_blog/rss.xml" class="hover:text-amber-600 inline-flex items-center gap-1">全站 RSS 订阅</a></li> </ul> </div> </div> <!-- Bottom copyright --> <div class="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4"> <div>
+&copy; 2026 智量双线 | Quant &amp; AI. 保留所有权利。
+</div> <div class="flex items-center gap-4"> <span>基于 Astro 5 &amp; Tailwind 构建</span> <a href="/quant_ai_blog/sitemap-index.xml" class="hover:underline">站点地图</a> </div> </div> </div> </footer> <!-- Universal code copy button injector --> <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('pre').forEach((pre) => {
+          if (pre.querySelector('.copy-code-button')) return;
+          const button = document.createElement('button');
+          button.className = 'copy-code-button';
+          button.type = 'button';
+          button.innerText = '复制';
+          button.setAttribute('aria-label', '复制代码');
+
+          button.addEventListener('click', async () => {
+            const code = pre.querySelector('code')?.innerText || pre.innerText;
+            try {
+              await navigator.clipboard.writeText(code);
+              button.innerText = '已复制!';
+              button.classList.add('bg-quant-600', 'text-white');
+              setTimeout(() => {
+                button.innerText = '复制';
+                button.classList.remove('bg-quant-600', 'text-white');
+              }, 2000);
+            } catch (err) {
+              button.innerText = '失败';
+              setTimeout(() => (button.innerText = '复制'), 2000);
+            }
+          });
+
+          pre.appendChild(button);
+        });
+      });
+    </script> </body> </html>
