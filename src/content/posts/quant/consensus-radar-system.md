@@ -5,8 +5,8 @@ track: "quant"
 category: "factor-research"
 format: "research"
 tags: ["共识雷达", "量化投研", "非共识Alpha", "ClickHouse", "大模型投研", "ETF配置", "系统架构"]
-publishedAt: "2026-09-14T10:00:00+08:00"
-updatedAt: "2026-09-14T10:05:00+08:00"
+publishedAt: "2026-09-14T09:30:00+08:00"
+updatedAt: "2026-09-14T09:40:00+08:00"
 draft: false
 featured: true
 sources:
